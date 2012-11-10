@@ -4,7 +4,6 @@
 		<title>Quick View Scheduler</title>
 		<link rel="stylesheet" href="static/css/bootstrap.css" type="text/css"/>
 		<link rel="stylesheet" href="static/css/scheduler.css" type="text/css"/>
-		<link rel="stylesheet" href="static/css/jquery.colorpicker.css" type="text/css"/>
 		<link rel="stylesheet" href="styleGenerator" type="text/css"/>
 	</head>
 
@@ -14,7 +13,7 @@
 
 			<div class="row title-and-user">
 				
-				<div class="span6 header-row"><a href="?w=">&laquo;</a> <span>${firstDayOfWeek?string('MMMM')}, Week ${firstDayOfWeek?string('w')}</span> <a href="?w=">&raquo;</a></div>
+				<div class="span6 header-row"><a href="?w=${previousWeek}">&laquo;</a> <span>${firstDayOfWeek?string('MMMM, yyyy')}, Week ${firstDayOfWeek?string('w')}</span> <a href="?w=${nextWeek}">&raquo;</a></div>
 				<div class="span2 offset4">
 					<div class="btn-group pull-right">
 					  <a class="btn btn-primary" href="#">${name} (${email})</a>
@@ -133,10 +132,8 @@
 	</body>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 	<script src="static/js/scheduler.js"></script>
 	<script src="static/js/bootstrap.js"></script>	
-	<script src="static/js/jquery.colorpicker.js"></script>	
 </html>
 
 

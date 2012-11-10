@@ -38,9 +38,11 @@ public class ScheduleController {
 
     private static final String AUTH_CODE = "auth_code";
 
-    private RestOperations googleRestTemplate;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleController.class);
+
+    private static final DateFormat YEAR_WEEK_FORMAT = new SimpleDateFormat("YYYYww");
+
+    private RestOperations googleRestTemplate;
 
     @Autowired
     public ScheduleController(RestOperations googleRestTemplate) {
@@ -48,12 +50,10 @@ public class ScheduleController {
     }
 
     @RequestMapping("/oauth2callback")
-    public String redirectLocation(@RequestParam(required = false) String error, @RequestParam(required = false) String code,
-            HttpSession session) {
+    public String redirectLocation(@RequestParam(required = false) String error, @RequestParam(required = false) String code, HttpSession session) {
         if (error != null) {
             LOGGER.info("Error is: {}", error);
-        }
-        else if (code != null) {
+        } else if (code != null) {
             LOGGER.info("Got code: {}", code);
             session.setAttribute(AUTH_CODE, code);
         }
@@ -61,7 +61,7 @@ public class ScheduleController {
     }
 
     @RequestMapping("/")
-    public String getMain(ModelMap model, HttpSession session, @RequestParam(value="w", required=false) String yearAndWeek) {
+    public String getMain(ModelMap model, HttpSession session, @RequestParam(value = "w", required = false) String yearAndWeek) {
         ObjectNode res = null;
         try {
             res = fetchGoogleInfo(session);
@@ -79,23 +79,30 @@ public class ScheduleController {
     }
 
     protected final String makeWeekLink(String yearAndWeek, int increment) {
-        // TODO Auto-generated method stub
-        return null;
+        final Date firstDay = getFirstDayOfWeek(yearAndWeek);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(firstDay);
+        cal.add(Calendar.WEEK_OF_YEAR, increment);
+        return YEAR_WEEK_FORMAT.format(cal.getTime());
     }
 
     protected final Date getFirstDayOfWeek(String yearAndWeek) {
-        final DateFormat format = new SimpleDateFormat("YYYYww");
         final Calendar cal = Calendar.getInstance();
-        try {
-            cal.setTime(format.parse(yearAndWeek));
-        } catch (ParseException e) {
-            LOGGER.error("Failed to parse the year and week. Using now. {}", e);
+        if (yearAndWeek != null) {
+            try {
+                cal.setTime(YEAR_WEEK_FORMAT.parse(yearAndWeek));
+            } catch (ParseException e) {
+                LOGGER.error("Failed to parse the year and week. Using now. {}", e);
+                cal.setTime(new Date());
+            }
+        } else {
             cal.setTime(new Date());
         }
+        
         cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
         return cal.getTime();
     }
-    
+
     protected ObjectNode fetchGoogleInfo(HttpSession session) throws RedirectException {
         ObjectNode res = null;
         try {
@@ -113,7 +120,7 @@ public class ScheduleController {
                 throw new RedirectException("redirect:" + builder.build());
             } catch (URISyntaxException e) {
                 e.printStackTrace();
-            } 
+            }
         }
         return res;
     }
