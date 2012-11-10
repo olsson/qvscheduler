@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+	
+	<security:http security="none"/>
+
+	<oauth2:resource id="googleResource" authentication-scheme="query" type="authorization_code"
+		client-id="${google.oauth.clientid}" client-secret="${google.oauth.secret}"
+		access-token-uri="https://accounts.google.com/o/oauth2/token" client-authentication-scheme="form"
+		user-authorization-uri="https://accounts.google.com/o/oauth2/auth"
+		pre-established-redirect-uri="${google.redirect.url}"
+		scope="https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email"/>
+	
+	<oauth2:rest-template id="googleRestTemplate" resource="googleResource"/>
+
+</beans>

@@ -1,0 +1,16 @@
+.header-row span {
+	font-size: 36px;
+	line-height: 40px;
+	font-family: inherit;
+	margin: 10px 0;
+	text-rendering: optimizelegibility;
+}
+
+.header-row a {
+	font-size: 25px;
+	vertical-align: 5px;
+}
+
+.title-and-user {
+	padding: 20px 0;
+}
