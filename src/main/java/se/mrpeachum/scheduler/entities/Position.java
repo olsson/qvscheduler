@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
  *
  */
 @Entity
-public class Position {
+public class Position extends BaseEntity {
 
     @Id
     @GeneratedValue

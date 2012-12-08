@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
  * 
  */
 @Entity
-public class Employee {
+public class Employee extends BaseEntity {
 
     @Id
     @GeneratedValue

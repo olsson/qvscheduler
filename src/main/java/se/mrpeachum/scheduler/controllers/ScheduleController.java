@@ -3,31 +3,32 @@
  */
 package se.mrpeachum.scheduler.controllers;
 
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.http.client.utils.URIBuilder;
-import org.codehaus.jackson.node.ObjectNode;
-import org.codehaus.jackson.node.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestOperations;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import se.mrpeachum.scheduler.entities.Position;
+import se.mrpeachum.scheduler.entities.User;
 import se.mrpeachum.scheduler.exception.RedirectException;
+import se.mrpeachum.scheduler.service.SchedulerService;
 
 /**
  * @author eolsson
@@ -36,48 +37,47 @@ import se.mrpeachum.scheduler.exception.RedirectException;
 @Controller
 public class ScheduleController {
 
-    private static final String AUTH_CODE = "auth_code";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleController.class);
 
     private static final DateFormat YEAR_WEEK_FORMAT = new SimpleDateFormat("YYYYww");
 
-    private RestOperations googleRestTemplate;
-
+    private SchedulerService schedulerService;
+    
     @Autowired
-    public ScheduleController(RestOperations googleRestTemplate) {
-        this.googleRestTemplate = googleRestTemplate;
-    }
-
-    @RequestMapping("/oauth2callback")
-    public String redirectLocation(@RequestParam(required = false) String error, @RequestParam(required = false) String code, HttpSession session) {
-        if (error != null) {
-            LOGGER.info("Error is: {}", error);
-        } else if (code != null) {
-            LOGGER.info("Got code: {}", code);
-            session.setAttribute(AUTH_CODE, code);
-        }
-        return "redirect:/";
+    public ScheduleController(SchedulerService schedulerService) {
+    	this.schedulerService = schedulerService;
     }
 
     @RequestMapping("/")
     public String getMain(ModelMap model, HttpSession session, @RequestParam(value = "w", required = false) String yearAndWeek) {
-        ObjectNode res = null;
-        try {
-            res = fetchGoogleInfo(session);
-        } catch (RedirectException re) {
-            return re.getRedirectUrl();
-        }
-        TextNode name = (TextNode) res.get("name");
-        TextNode email = (TextNode) res.get("email");
-        model.addAttribute("email", email.asText());
-        model.addAttribute("name", name.asText());
+    	User user;
+    	try {
+    		user = schedulerService.fetchOrSaveUser(session);
+    	} catch (RedirectException r) {
+    		return r.getRedirectUrl();
+    	}
+        
+        model.addAttribute("user", user);
+        model.addAttribute("positions", schedulerService.getPositions(user));
         model.addAttribute("firstDayOfWeek", getFirstDayOfWeek(yearAndWeek));
         model.addAttribute("nextWeek", makeWeekLink(yearAndWeek, 1));
         model.addAttribute("previousWeek", makeWeekLink(yearAndWeek, -1));
         return "main";
     }
 
+    @RequestMapping(value ="/positions", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void putPositions(@RequestBody List<Position> positions, HttpSession session) {
+    	User user;
+    	try {
+    		user = schedulerService.fetchOrSaveUser(session);
+    	} catch (RedirectException r) {
+    		throw new IllegalStateException("Must be logged in");
+    	}
+    	LOGGER.debug("Received {}", positions);
+    	
+    }
+    
     protected final String makeWeekLink(String yearAndWeek, int increment) {
         final Date firstDay = getFirstDayOfWeek(yearAndWeek);
         Calendar cal = Calendar.getInstance();
@@ -103,26 +103,5 @@ public class ScheduleController {
         return cal.getTime();
     }
 
-    protected ObjectNode fetchGoogleInfo(HttpSession session) throws RedirectException {
-        ObjectNode res = null;
-        try {
-            String code = (String) session.getAttribute(AUTH_CODE);
-            if (code != null) {
-                ((OAuth2RestTemplate) googleRestTemplate).getOAuth2ClientContext().getAccessTokenRequest().setAuthorizationCode(code);
-            }
-            res = googleRestTemplate.getForObject("https://www.googleapis.com/oauth2/v1/userinfo", ObjectNode.class);
-        } catch (UserRedirectRequiredException redirectException) {
-            try {
-                URIBuilder builder = new URIBuilder(redirectException.getRedirectUri());
-                for (Map.Entry<String, String> entry : redirectException.getRequestParams().entrySet()) {
-                    builder.addParameter(entry.getKey(), entry.getValue());
-                }
-                throw new RedirectException("redirect:" + builder.build());
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
-        return res;
-    }
 
 }

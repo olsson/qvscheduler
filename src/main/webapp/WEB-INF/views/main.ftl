@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="styleGenerator" type="text/css"/>
 	</head>
 
-	<body data-token="">
+	<body>
 		
 		<div class="container">
 
@@ -16,7 +16,7 @@
 				<div class="span6 header-row"><a href="?w=${previousWeek}">&laquo;</a> <span>${firstDayOfWeek?string('MMMM, yyyy')}, Week ${firstDayOfWeek?string('w')}</span> <a href="?w=${nextWeek}">&raquo;</a></div>
 				<div class="span2 offset4">
 					<div class="btn-group pull-right">
-					  <a class="btn btn-primary" href="#">${name} (${email})</a>
+					  <a class="btn btn-primary" href="#">${user.name} (${user.email})</a>
 					  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
 					  <ul class="dropdown-menu">
 						<li><a href="#"><i class="icon-user"></i> Staff</a></li>
@@ -111,14 +111,15 @@
 		  </div>
 		  <div class="modal-body">
 		  	<form id="positions-form">
-				<p>Find your desired color's HEX code at <a href="http://www.colorpicker.com/" target="_new">www.colorpicker.com</a></p>
+				<p>Find your desired color's <a href="http://www.colorpicker.com/" target="_new">HEX code</a> and enter it after a #-sign or type its name.</p>
 				
-				<div class="position-row hide template">
-					<input type="text" name="names" placeholder="New position..." />
-					<input class="span2" type="text" name="colors" placeholder="Color HEX code..." />
-					<span class="label" style=""></span>
-				</div>
 			</form>
+			<div class="position-row hide template">
+				<input type="hidden" name="id" value=""/>
+				<input type="text" name="name" placeholder="New position..." />
+				<input class="span2" type="text" name="color" placeholder="Color HEX code..." />
+				<span class="label" style=""></span>
+			</div>
 			<div>
 				<a class="btn btn-small" href="#"><i class="icon-plus"></i></a>
 			</div>

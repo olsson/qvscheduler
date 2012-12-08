@@ -3,6 +3,9 @@
  */
 package se.mrpeachum.scheduler.controllers;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,8 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.client.RestOperations;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import se.mrpeachum.scheduler.dao.UserDao;
 
 /**
  * @author eolsson
@@ -29,10 +31,13 @@ public class ScheduleControllerTest {
        @Mock
        private RestOperations googleRestTemplate;
        
+       @Mock
+       private UserDao userDao;
+       
        @Before
        public void setup() {
            MockitoAnnotations.initMocks(this);
-           target = new ScheduleController(googleRestTemplate);
+           target = new ScheduleController(googleRestTemplate, userDao);
        }
        
        @Test

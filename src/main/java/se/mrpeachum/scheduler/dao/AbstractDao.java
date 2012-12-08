@@ -8,15 +8,17 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.request.RequestContextHolder;
+
+import se.mrpeachum.scheduler.entities.BaseEntity;
 
 /**
  * @author eolsson
  * @param <T>
  *
  */
-public abstract class AbstractDao<T> implements Dao<T> {
+public abstract class AbstractDao<T extends BaseEntity> implements Dao<T> {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -27,6 +29,11 @@ public abstract class AbstractDao<T> implements Dao<T> {
 	public AbstractDao() {
 		final ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
         this.entityClass = (Class<T>) type.getActualTypeArguments()[0];
+	}
+	
+	@SuppressWarnings("unchecked")
+	public T findById(Long id) {
+		return (T) getSession().createCriteria(entityClass).add(Restrictions.eq("id", id)).uniqueResult();
 	}
 	
 	@Override
@@ -62,6 +69,10 @@ public abstract class AbstractDao<T> implements Dao<T> {
 		} else {
 			return sessionFactory.openSession();
 		}
+	}
+	
+	protected final Class<T> getEntityClass() {
+		return this.entityClass;
 	}
 	
 	

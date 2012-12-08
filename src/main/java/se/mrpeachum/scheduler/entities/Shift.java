@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
  *
  */
 @Entity
-public class Shift {
+public class Shift extends BaseEntity {
 
     @Id
     @GeneratedValue
