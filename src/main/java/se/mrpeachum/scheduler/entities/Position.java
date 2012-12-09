@@ -70,7 +70,15 @@ public class Position extends BaseEntity {
         this.color = color;
     }
 
-    /* (non-Javadoc)
+    public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override

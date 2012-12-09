@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import se.mrpeachum.scheduler.entities.Position;
+import se.mrpeachum.scheduler.entities.PositionList;
 import se.mrpeachum.scheduler.entities.User;
 import se.mrpeachum.scheduler.exception.RedirectException;
 import se.mrpeachum.scheduler.service.SchedulerService;
@@ -67,7 +66,7 @@ public class ScheduleController {
 
     @RequestMapping(value ="/positions", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void putPositions(@RequestBody List<Position> positions, HttpSession session) {
+    public void putPositions(@RequestBody PositionList positions, HttpSession session) {
     	User user;
     	try {
     		user = schedulerService.fetchOrSaveUser(session);
@@ -75,7 +74,7 @@ public class ScheduleController {
     		throw new IllegalStateException("Must be logged in");
     	}
     	LOGGER.debug("Received {}", positions);
-    	
+    	schedulerService.mergePositions(user, positions);
     }
     
     protected final String makeWeekLink(String yearAndWeek, int increment) {

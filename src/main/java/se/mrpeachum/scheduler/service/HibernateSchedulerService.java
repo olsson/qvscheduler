@@ -4,6 +4,7 @@
 package se.mrpeachum.scheduler.service;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.http.client.utils.URIBuilder;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.node.TextNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
@@ -25,6 +28,7 @@ import se.mrpeachum.scheduler.controllers.oauth.OAuth2Handler;
 import se.mrpeachum.scheduler.dao.PositionDao;
 import se.mrpeachum.scheduler.dao.UserDao;
 import se.mrpeachum.scheduler.entities.Position;
+import se.mrpeachum.scheduler.entities.PositionList;
 import se.mrpeachum.scheduler.entities.User;
 import se.mrpeachum.scheduler.exception.RedirectException;
 
@@ -44,6 +48,8 @@ public class HibernateSchedulerService implements SchedulerService {
 	
 	@Autowired
 	private PositionDao positionDao;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSchedulerService.class);
 	
 	/* (non-Javadoc)
 	 * @see se.mrpeachum.scheduler.service.SchedulerService#fetchOrSaveUser(javax.servlet.http.HttpSession)
@@ -97,12 +103,37 @@ public class HibernateSchedulerService implements SchedulerService {
 	}
 
 	@Override
-	public void mergePositions(User user, List<Position> newPositions) {
-		List<Position> positions = positionDao.getPositionsForUser(user);
-		for (Iterator<Position> iter = positions.iterator(); iter.hasNext();) {
-			Position pos = iter.next();
-			
+	@Transactional(readOnly = false)
+	public void mergePositions(User user, PositionList newPositions) {
+		LOGGER.debug("New positions class: {}, toString: {}", newPositions.getClass(), newPositions);
+		List<Position> existingPositions = positionDao.getPositionsForUser(user);
+		List<Position> positionsToRemove = new ArrayList<>();
+		// see if any existing are now missing (aka deleted)
+		for (Position pos : existingPositions) {
+			if (!newPositions.contains(pos)) {
+				positionsToRemove.add(pos);
+			}
+		}
+		// delete the removed positions
+		for (Position pos : positionsToRemove) {
+			positionDao.delete(pos);
+		}
+		for (Position newPosition: newPositions) {
+			if (existingPositions.contains(newPosition)) {
+				for (Position existingPos : existingPositions) {
+					if (existingPos.getId() == newPosition.getId()) {
+						existingPos.setName(newPosition.getName());
+						existingPos.setColor(newPosition.getColor());
+						positionDao.save(existingPos);
+						break;
+					}
+				}
+			} else {
+				newPosition.setUser(user);
+				positionDao.save(newPosition);
+			}
 		}
 	}
+	
 
 }

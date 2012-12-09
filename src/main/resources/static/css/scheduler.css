@@ -14,3 +14,21 @@
 .title-and-user {
 	padding: 20px 0;
 }
+
+.position-row .icon-remove {
+	cursor: pointer;
+}
+
+#employeeBox ul {
+	list-style-type: none;
+	margin-left: 0;
+}
+
+#employeeBox li {
+	margin-bottom: 5px;
+}
+
+#employeeBox .first {
+	padding-right: 10px;
+	padding-left: 10px;
+}
