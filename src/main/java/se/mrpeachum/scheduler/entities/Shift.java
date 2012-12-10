@@ -3,6 +3,8 @@
  */
 package se.mrpeachum.scheduler.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -21,16 +23,8 @@ public class Shift extends BaseEntity {
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "employeeId")
-    private Employee employee;
-    
-    @ManyToOne
     @JoinColumn(name = "positionId")
     private Position position;
-    
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private User user;
     
     private Integer startHour;
     
@@ -39,6 +33,8 @@ public class Shift extends BaseEntity {
     private Integer endHour;
     
     private Integer endMinute;
+    
+    private Date day;
 
     /**
      * @return the id
@@ -54,19 +50,6 @@ public class Shift extends BaseEntity {
         this.id = id;
     }
 
-    /**
-     * @return the employee
-     */
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    /**
-     * @param employee the employee to set
-     */
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
 
     /**
      * @return the position
@@ -138,7 +121,15 @@ public class Shift extends BaseEntity {
         this.endMinute = endMinute;
     }
 
-    /* (non-Javadoc)
+    public Date getDay() {
+		return day;
+	}
+
+	public void setDay(Date day) {
+		this.day = day;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override

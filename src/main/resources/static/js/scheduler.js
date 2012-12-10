@@ -13,20 +13,88 @@
 		$('#employeeBox .modal-body li .icon-remove').live("click", Sched.removeEmployee);
 		$('#employeeBox .btn-small').bind("click", Sched.addNewEmployee);
 		$('#employeeBox .modal-footer .btn-primary').bind("click", Sched.saveEmployees);
+		
+		$('table .icon-plus').bind("click", Sched.togglePopover);
+		$('.popover-content .dropdown-menu a').live("click", Sched.updateSelectedValue);
+		$('.popover-content .btn-primary').live("click", Sched.addNewShift);
+	};
+	
+	Sched.addNewShift = function() {
+		var $popover = $(this).closest('.popover-content'),
+			position = $popover.find('.position .value').text(),
+			startHour = $popover.find('.startHour .value').text(),
+			startMinute = $popover.find('.startMinute .value').text(),
+			endHour = $popover.find('.endHour .value').text(),
+			endMinute = $popover.find('.endMinute .value').text(),
+			json = {};
+		
+		json = '{ "employee" : "' + $(this).data('employee') + '", ' +
+				' "day" : "' + $(this).data('day') + '", ' +
+				' "position" : "' + position + '", ' +
+				' "startHour" : "' + startHour + '", ' +
+				' "startMinute" : "' + startMinute + '", ' +
+				' "endHour" : "' + endHour + '", ' +
+				' "endMinute" : "' + endMinute + '" }';
+		
+		$.ajax('shift', 
+				{ data: json, 
+				  type: 'PUT',
+				  dataType: 'json',
+				  contentType: 'application/json',
+				  success: function() {
+					  $('table .icon-plus[data-visible="1"]').click();
+					  //location.reload();
+				  }}
+		);
+	};
+	
+	Sched.updateSelectedValue = function() {
+		var newText = $(this).text(),
+			$updateNode = $(this).closest('.btn-group').find('.value');
+		$updateNode.text(newText);
+	};
+	
+	Sched.togglePopover = function() {
+		var $elem = $(this), 
+			thisVisible = $elem.attr('data-visible'),
+			visiblePopovers = $('table .icon-plus[data-visible="1"]').size(),
+			$form = $('.shift-template').clone().removeClass('hide shift-template');
+		
+		console.log(thisVisible);
+		console.log(visiblePopovers);
+		
+		if ((thisVisible == undefined || thisVisible == 0) && visiblePopovers >= 1) {
+			return;
+		}
+		
+		$form.find('.btn-primary').attr('data-employee', $elem.data('employee'));
+		$form.find('.btn-primary').attr('data-day', $elem.data('day'));
+		$elem.popover( { html: true,
+						placement: 'bottom',
+						content: $form.html(),
+						title: 'Add Shift',
+						trigger: 'manual' } );
+		if (thisVisible === '1') {
+			$elem.popover('destroy');
+			$elem.attr('data-visible', '0');
+		} else {
+			$elem.popover('show');
+			$elem.attr('data-visible', '1');
+		}
 	};
 	
 	Sched.saveEmployees = function() {
 		var staff = '[ ', total = $('#employeeBox .modal-body li').size();
 		$('#employeeBox .modal-body li').each(function(idx, item){
 			staff += '{ "id" : "' + $(item).find('span.id').text() + '", ' +
-						'"first" : "' + $(item).find('span.first').text() + '", ' +
-						'"last" : "' + $(item).find('span.last').text() + '" }';
+						'"firstName" : "' + $(item).find('span.first').text() + '", ' +
+						'"lastName" : "' + $(item).find('span.last').text() + '" }';
 			if (idx + 1 != total) {
 				staff += ',';
 			}
 		});
 		staff += ' ]';
-		$.ajax('staff', 
+		$.ajax('employees', 
 				{ data: staff, 
 				  type: 'PUT',
 				  dataType: 'json',

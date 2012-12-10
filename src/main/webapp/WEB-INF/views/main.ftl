@@ -41,54 +41,25 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>Judy</td>
-						<td>
-							<span class="label label-cashier">9&mdash;6</span>
-						</td>
-						<td>
-							<span class="label label-cashier">9&mdash;6</span>
-						</td>
-						<td>
-							<span class="label label-cashier">9&mdash;6</span>
-						</td>
-						<td>
-							<a class="btn btn-small" href="#"><i class="icon-plus"></i></a>
-						</td>
-						<td>
-							<span class="label label-cashier">9&mdash;6</span>
-						</td>
-						<td>
-							<span class="label label-cashier">9&mdash;6</span>
-						</td>
-						<td>
-							<a class="btn btn-small" href="#"><i class="icon-plus"></i></a>
-						</td>
-					</tr>
-					<tr>
-						<td>Tim</td>
-						<td>
-							<span class="label label-pharmacist">7&mdash;5</span>
-						</td>
-						<td>
-							<span class="label label-pharmacist">7&mdash;5</span>
-						</td>
-						<td>
-							<span class="label label-pharmacist">7&mdash;5</span>
-						</td>
-						<td>
-							<span class="label label-pharmacist">7&mdash;5</span>
-						</td>
-						<td>
-							<span class="label label-pharmacist">7&mdash;5</span>
-						</td>
-						<td>
-							<a class="btn btn-small" href="#"><i class="icon-plus"></i></a>
-						</td>
-						<td>
-							<a class="btn btn-small" href="#"><i class="icon-plus"></i></a>
-						</td>
-					</tr>
+					<#list employees as employee>
+						<tr>
+							<td>${employee.firstName} ${employee.lastName}</td>
+							
+							<#list 0..6 as i>
+								<td>
+									<#assign day = (firstDayOfWeek?long) + (i * 86400000) />
+									<#list employee.getShiftsForDay(day?number_to_date) as shift>
+										<span class="label label-${shift.position.name?lower_case?replace(' ','')}">
+											${shift.startHour}<#if shift.startMinute??>:${shift.startMinute}</#if>&mdash;
+											${shift.endHour}<#if shift.endMinute??>:${shift.endMinute}</#if>
+										</span>
+									</#list>
+									<i class="icon-plus" data-employee="${employee.id}" data-day="${day?c}"></i>
+								</td>
+							</#list>  
+						</tr>
+					</#list>
+					
 				</tbody>
 			</table>
 			
@@ -96,7 +67,7 @@
 				<div class="span2 offset10">
 					<div class="well">
 						<#list positions as pos> 
-							<span class="label" style="background-color:${pos.color}">${pos.name}</span>
+							<span class="label label-${pos.name?lower_case?replace(' ','')}">${pos.name}</span>
 						</#list>
 					</div>
 				</div>
@@ -146,6 +117,9 @@
 		  </div>
 		  <div class="modal-body">
 		  	<ul>
+		  		<#list employees as emp>
+		  			<li><a href="#" class="btn btn-large disabled"><i class="icon-remove"></i><span class="first">${emp.firstName}</span><span class="last">${emp.lastName}</span></a></li>
+		  		</#list>
 		  	</ul>
 		  	<div>
 				<input type="text" class="span2" style="margin-bottom:0" name="first" placeholder="First" /> 
@@ -160,12 +134,82 @@
 		  </div>
 		</div>
 		
+		<div class="shift-template hide">
+			<div class="btn-group position">
+			  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			    <span class="value">Position</span>
+			    <span class="caret"></span>
+			  </a>
+				<ul class="dropdown-menu position" role="menu" aria-labelledby="dropdownMenu">
+					<#list positions as pos> 
+						<li><a tabindex="-1" href="#">${pos.name}</a></li>
+					</#list>
+				</ul>
+			</div>
+			
+			<div>
+				Start: 
+				<div class="btn-group startHour">
+				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				    <span class="value">1</span>
+				    <span class="caret"></span>
+				  </a> 
+				  <ul class="dropdown-menu hour" role="menu" aria-labelledby="dropdownMenu">
+					<#list 1..12 as hour>
+						<li><a tabindex="-1" href="#">${hour}</a></li>
+					</#list>
+				  </ul>
+				</div>
+				<div class="btn-group startMinute">
+				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				    <span class="value">00</span>
+				    <span class="caret"></span>
+				  </a> 
+				  <ul class="dropdown-menu minute" role="menu" aria-labelledby="dropdownMenu">
+					<li><a tabindex="-1" href="#">00</a></li>
+					<li><a tabindex="-1" href="#">15</a></li>
+					<li><a tabindex="-1" href="#">30</a></li>
+					<li><a tabindex="-1" href="#">45</a></li>
+				  </ul>
+				</div>
+			</div>
+			
+			<div>
+				End: 
+				<div class="btn-group endHour">
+				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				    <span class="value">1</span>
+				    <span class="caret"></span>
+				  </a>
+				  <ul class="dropdown-menu hour" role="menu" aria-labelledby="dropdownMenu">
+					<#list 1..12 as hour>
+						<li><a tabindex="-1" href="#">${hour}</a></li>
+					</#list>
+				  </ul>
+				</div>
+				<div class="btn-group endMinute">
+				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				    <span class="value">00</span>
+				    <span class="caret"></span>
+				  </a>
+				  <ul class="dropdown-menu minute" role="menu" aria-labelledby="dropdownMenu">
+					<li><a tabindex="-1" href="#">00</a></li>
+					<li><a tabindex="-1" href="#">15</a></li>
+					<li><a tabindex="-1" href="#">30</a></li>
+					<li><a tabindex="-1" href="#">45</a></li>
+				  </ul>
+				</div>
+			</div>
+			
+			<a href="#" class="btn btn-primary">Add</a>
+		</div>
+		
 	</body>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-	<script src="static/js/scheduler.js"></script>
 	<script src="static/js/bootstrap.js"></script>	
+	<script src="static/js/scheduler.js"></script>
 </html>
 
 

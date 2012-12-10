@@ -6,6 +6,7 @@ package se.mrpeachum.scheduler.controllers;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -24,7 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import se.mrpeachum.scheduler.entities.PositionList;
+import se.mrpeachum.scheduler.entities.Employee;
+import se.mrpeachum.scheduler.entities.Position;
 import se.mrpeachum.scheduler.entities.User;
 import se.mrpeachum.scheduler.exception.RedirectException;
 import se.mrpeachum.scheduler.service.SchedulerService;
@@ -58,6 +60,7 @@ public class ScheduleController {
         
         model.addAttribute("user", user);
         model.addAttribute("positions", schedulerService.getPositions(user));
+        model.addAttribute("employees", schedulerService.getEmployees(user));
         model.addAttribute("firstDayOfWeek", getFirstDayOfWeek(yearAndWeek));
         model.addAttribute("nextWeek", makeWeekLink(yearAndWeek, 1));
         model.addAttribute("previousWeek", makeWeekLink(yearAndWeek, -1));
@@ -66,15 +69,28 @@ public class ScheduleController {
 
     @RequestMapping(value ="/positions", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void putPositions(@RequestBody PositionList positions, HttpSession session) {
+    public void putPositions(@RequestBody Position[] positions, HttpSession session) {
     	User user;
     	try {
     		user = schedulerService.fetchOrSaveUser(session);
     	} catch (RedirectException r) {
     		throw new IllegalStateException("Must be logged in");
     	}
-    	LOGGER.debug("Received {}", positions);
-    	schedulerService.mergePositions(user, positions);
+    	LOGGER.debug("Received {}", Arrays.asList(positions));
+    	schedulerService.mergePositions(user, Arrays.asList(positions));
+    }
+    
+    @RequestMapping(value = "/employees", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void putEmployees(@RequestBody Employee[] employees, HttpSession session) {
+    	User user;
+    	try {
+    		user = schedulerService.fetchOrSaveUser(session);
+    	} catch (RedirectException r) {
+    		throw new IllegalStateException("Must be logged in");
+    	}
+    	LOGGER.debug("Received {}", Arrays.asList(employees));
+    	schedulerService.mergeEmployees(user, Arrays.asList(employees));
     }
     
     protected final String makeWeekLink(String yearAndWeek, int increment) {

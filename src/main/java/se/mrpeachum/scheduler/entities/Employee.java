@@ -3,10 +3,15 @@
  */
 package se.mrpeachum.scheduler.entities;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -18,7 +23,7 @@ import javax.persistence.OneToMany;
  * 
  */
 @Entity
-public class Employee extends BaseEntity {
+public class Employee extends BaseEntity implements Comparable<Employee> {
 
     @Id
     @GeneratedValue
@@ -28,8 +33,11 @@ public class Employee extends BaseEntity {
 
     private String lastName;
     
-    @OneToMany(mappedBy = "employee", cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Shift> shifts;
+    
+    @Column(name = "sortOrder")
+    private Integer order;
     
     @ManyToOne
     @JoinColumn(name = "userId")
@@ -93,7 +101,33 @@ public class Employee extends BaseEntity {
         this.shifts = shifts;
     }
 
-    /* (non-Javadoc)
+    public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	public List<Shift> getShiftsForDay(Date day) {
+		List<Shift> shifts = new ArrayList<>();
+		for (Shift shift: this.shifts) {
+			if (shift.getDay().equals(day)) {
+				shifts.add(shift);
+			}
+		}
+		return shifts;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -123,5 +157,10 @@ public class Employee extends BaseEntity {
             return false;
         return true;
     }
+
+	@Override
+	public int compareTo(Employee other) {
+		return this.getOrder().compareTo(other.getOrder());
+	}
 
 }

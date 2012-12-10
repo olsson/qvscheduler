@@ -7,8 +7,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import se.mrpeachum.scheduler.entities.Employee;
 import se.mrpeachum.scheduler.entities.Position;
-import se.mrpeachum.scheduler.entities.PositionList;
 import se.mrpeachum.scheduler.entities.User;
 
 /**
@@ -21,5 +21,9 @@ public interface SchedulerService {
 	
 	List<Position> getPositions(User user);
 	
-	void mergePositions(User user, PositionList newPositions);
+	void mergePositions(User user, List<Position> newPositions);
+
+	void mergeEmployees(User user, List<Employee> newEmployees);
+
+	List<Employee> getEmployees(User user);
 }

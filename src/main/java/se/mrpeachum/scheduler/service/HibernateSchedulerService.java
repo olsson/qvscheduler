@@ -5,7 +5,7 @@ package se.mrpeachum.scheduler.service;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.http.client.utils.URIBuilder;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.node.TextNode;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestOperations;
 
 import se.mrpeachum.scheduler.controllers.oauth.OAuth2Handler;
+import se.mrpeachum.scheduler.dao.EmployeeDao;
 import se.mrpeachum.scheduler.dao.PositionDao;
 import se.mrpeachum.scheduler.dao.UserDao;
+import se.mrpeachum.scheduler.entities.Employee;
 import se.mrpeachum.scheduler.entities.Position;
-import se.mrpeachum.scheduler.entities.PositionList;
 import se.mrpeachum.scheduler.entities.User;
 import se.mrpeachum.scheduler.exception.RedirectException;
 
@@ -48,6 +50,9 @@ public class HibernateSchedulerService implements SchedulerService {
 	
 	@Autowired
 	private PositionDao positionDao;
+	
+	@Autowired
+	private EmployeeDao employeeDao;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSchedulerService.class);
 	
@@ -104,7 +109,7 @@ public class HibernateSchedulerService implements SchedulerService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void mergePositions(User user, PositionList newPositions) {
+	public void mergePositions(User user, List<Position> newPositions) {
 		LOGGER.debug("New positions class: {}, toString: {}", newPositions.getClass(), newPositions);
 		List<Position> existingPositions = positionDao.getPositionsForUser(user);
 		List<Position> positionsToRemove = new ArrayList<>();
@@ -133,6 +138,47 @@ public class HibernateSchedulerService implements SchedulerService {
 				positionDao.save(newPosition);
 			}
 		}
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void mergeEmployees(User user, List<Employee> newEmployees) {
+		List<Employee> existingEmployees = employeeDao.getEmployeesForUser(user);
+		List<Employee> remove = new ArrayList<>();
+		
+		for (Employee emp: existingEmployees) {
+			if (!newEmployees.contains(emp)) {
+				remove.add(emp);
+			}
+		}
+		
+		for (Employee emp: remove) {
+			employeeDao.delete(emp);
+		}
+		
+		int i = 0;
+		for (Employee emp: newEmployees) {
+			if (existingEmployees.contains(emp)) {
+				for (Employee existing: existingEmployees) {
+					if (existing.equals(emp)) {
+						existing.setOrder(i++);
+						employeeDao.save(existing);
+					}
+				}
+			} else {
+				emp.setUser(user);
+				emp.setOrder(i++);
+				employeeDao.save(emp);
+			}
+		}
+	}
+
+	@Override
+	@Transactional
+	public List<Employee> getEmployees(User user) {
+		List<Employee> employees = employeeDao.getEmployeesForUser(user);
+		Collections.sort(employees);
+		return employees;
 	}
 	
 
