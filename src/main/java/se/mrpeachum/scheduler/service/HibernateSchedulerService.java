@@ -6,6 +6,7 @@ package se.mrpeachum.scheduler.service;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.http.client.utils.URIBuilder;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.node.TextNode;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,8 @@ import se.mrpeachum.scheduler.dao.PositionDao;
 import se.mrpeachum.scheduler.dao.UserDao;
 import se.mrpeachum.scheduler.entities.Employee;
 import se.mrpeachum.scheduler.entities.Position;
+import se.mrpeachum.scheduler.entities.Shift;
+import se.mrpeachum.scheduler.entities.ShiftDto;
 import se.mrpeachum.scheduler.entities.User;
 import se.mrpeachum.scheduler.exception.RedirectException;
 
@@ -179,6 +181,26 @@ public class HibernateSchedulerService implements SchedulerService {
 		List<Employee> employees = employeeDao.getEmployeesForUser(user);
 		Collections.sort(employees);
 		return employees;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void saveShift(ShiftDto dto, User user) {
+		Shift shift = new Shift();
+		shift.setStartHour(Integer.parseInt(dto.getStartHour()));
+		shift.setStartMinute(Integer.parseInt(dto.getStartMinute()));
+		shift.setEndHour(Integer.parseInt(dto.getEndHour()));
+		shift.setEndMinute(Integer.parseInt(dto.getEndMinute()));
+		
+		Employee emp = employeeDao.findById(dto.getEmployee());
+		Position pos = positionDao.findByNameAndUser(dto.getPosition(), user);
+
+		Date day = new Date(dto.getDay());
+		shift.setDay(Normalizer.dateNormalizer(day));
+		
+		shift.setPosition(pos);
+		emp.getShifts().add(shift);
+		employeeDao.save(emp);
 	}
 	
 

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import se.mrpeachum.scheduler.entities.Employee;
 import se.mrpeachum.scheduler.entities.Position;
+import se.mrpeachum.scheduler.entities.ShiftDto;
 import se.mrpeachum.scheduler.entities.User;
 
 /**
@@ -26,4 +27,6 @@ public interface SchedulerService {
 	void mergeEmployees(User user, List<Employee> newEmployees);
 
 	List<Employee> getEmployees(User user);
+
+	void saveShift(ShiftDto shift, User user);
 }

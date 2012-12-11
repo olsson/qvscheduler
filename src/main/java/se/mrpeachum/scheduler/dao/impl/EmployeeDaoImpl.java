@@ -3,7 +3,10 @@
  */
 package se.mrpeachum.scheduler.dao.impl;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
@@ -23,7 +26,12 @@ public class EmployeeDaoImpl extends AbstractDao<Employee> implements EmployeeDa
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Employee> getEmployeesForUser(User user) {
-		return (List<Employee>) getSession().createCriteria(getEntityClass()).add(Restrictions.eq("user", user)).list();
+		List<Employee> list = (List<Employee>) getSession().createCriteria(getEntityClass()).add(Restrictions.eq("user", user)).list();
+		Map<Long,Employee> dupsMap = new HashMap<>();
+		for (Employee emp : list) {
+			dupsMap.put(emp.getId(), emp);
+		}
+		return Arrays.asList(dupsMap.values().toArray(new Employee[]{}));
 	}
 
 	

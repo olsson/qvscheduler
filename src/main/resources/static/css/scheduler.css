@@ -44,3 +44,21 @@ table .icon-plus {
 .startHour, .startMinute, .endHour, .endMinute, .popover-content .position {
 	padding-bottom: 5px;
 }
+
+.donate {
+	text-align: center;
+	border: 1px solid #DDD;
+	border-radius: 6px;
+	padding-top: 16px;
+	margin-top: 8em;
+}
+
+.donate form {
+	opacity: 0.5;
+}
+
+@media print {
+	.donate, .icon-plus, .name-drop, .move-week {
+		display: none;
+	}	
+}

@@ -16,4 +16,6 @@ public interface PositionDao extends Dao<Position> {
 
 	List<Position> getPositionsForUser(User user);
 	
+	Position findByNameAndUser(String name, User user);
+	
 }

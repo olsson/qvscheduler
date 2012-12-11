@@ -26,5 +26,14 @@ public class PositionDaoImpl extends AbstractDao<Position> implements PositionDa
 		return (List<Position>) getSession().createCriteria(getEntityClass()).add(Restrictions.eq("user", user)).list();
 	}
 
+	@Override
+	public Position findByNameAndUser(String name, User user) {
+		return (Position) getSession().createCriteria(getEntityClass())
+				.add( Restrictions.and(
+						Restrictions.eq("user", user),
+						Restrictions.eq("name", name) )
+					).uniqueResult();
+	}
+
 	
 }

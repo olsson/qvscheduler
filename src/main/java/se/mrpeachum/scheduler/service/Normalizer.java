@@ -1,0 +1,26 @@
+/**
+ * 
+ */
+package se.mrpeachum.scheduler.service;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+/**
+ * @author eolsson
+ *
+ */
+public class Normalizer {
+
+	public static Date dateNormalizer(Date day) {
+		Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+		cal.setTime(day);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
+	
+}

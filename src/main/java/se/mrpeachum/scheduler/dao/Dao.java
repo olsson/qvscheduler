@@ -21,4 +21,6 @@ public interface Dao<T> {
 	
 	void flush();
 	
+	T findById(Long id);
+	
 }

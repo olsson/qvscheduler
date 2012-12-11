@@ -15,9 +15,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.client.RestOperations;
 
-import se.mrpeachum.scheduler.dao.UserDao;
+import se.mrpeachum.scheduler.service.SchedulerService;
 
 /**
  * @author eolsson
@@ -29,15 +28,13 @@ public class ScheduleControllerTest {
        private ScheduleController target;
        
        @Mock
-       private RestOperations googleRestTemplate;
+       private SchedulerService schedulerService;
        
-       @Mock
-       private UserDao userDao;
        
        @Before
        public void setup() {
            MockitoAnnotations.initMocks(this);
-           target = new ScheduleController(googleRestTemplate, userDao);
+           target = new ScheduleController(schedulerService);
        }
        
        @Test

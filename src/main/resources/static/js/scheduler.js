@@ -28,6 +28,15 @@
 			endMinute = $popover.find('.endMinute .value').text(),
 			json = {};
 		
+		if (position === 'Position') {
+			alert('Select a position');
+			return;
+		}
+		if (startHour === endHour && startMinute === endMinute) {
+			alert('Start and end times should be different');
+			return;
+		}
+		
 		json = '{ "employee" : "' + $(this).data('employee') + '", ' +
 				' "day" : "' + $(this).data('day') + '", ' +
 				' "position" : "' + position + '", ' +
@@ -36,15 +45,16 @@
 				' "endHour" : "' + endHour + '", ' +
 				' "endMinute" : "' + endMinute + '" }';
 		
-		$.ajax('shift', 
+		$.ajax('shifts', 
 				{ data: json, 
-				  type: 'PUT',
+				  type: 'POST',
 				  dataType: 'json',
 				  contentType: 'application/json',
 				  success: function() {
 					  $('table .icon-plus[data-visible="1"]').click();
-					  //location.reload();
-				  }}
+					  location.reload();
+				  }
+				}
 		);
 	};
 	

@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author mrpeachum
@@ -26,14 +27,19 @@ public class Shift extends BaseEntity {
     @JoinColumn(name = "positionId")
     private Position position;
     
+    @NotNull
     private Integer startHour;
     
+    @NotNull
     private Integer startMinute;
     
+    @NotNull
     private Integer endHour;
     
+    @NotNull
     private Integer endMinute;
     
+    @NotNull
     private Date day;
 
     /**

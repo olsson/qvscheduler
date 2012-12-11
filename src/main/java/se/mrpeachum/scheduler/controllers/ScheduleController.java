@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import se.mrpeachum.scheduler.entities.Employee;
 import se.mrpeachum.scheduler.entities.Position;
+import se.mrpeachum.scheduler.entities.ShiftDto;
 import se.mrpeachum.scheduler.entities.User;
 import se.mrpeachum.scheduler.exception.RedirectException;
 import se.mrpeachum.scheduler.service.SchedulerService;
@@ -50,7 +52,7 @@ public class ScheduleController {
     }
 
     @RequestMapping("/")
-    public String getMain(ModelMap model, HttpSession session, @RequestParam(value = "w", required = false) String yearAndWeek) {
+    public String getMain(final ModelMap model, final HttpSession session, @RequestParam(value = "w", required = false) final String yearAndWeek) {
     	User user;
     	try {
     		user = schedulerService.fetchOrSaveUser(session);
@@ -69,28 +71,26 @@ public class ScheduleController {
 
     @RequestMapping(value ="/positions", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void putPositions(@RequestBody Position[] positions, HttpSession session) {
-    	User user;
-    	try {
-    		user = schedulerService.fetchOrSaveUser(session);
-    	} catch (RedirectException r) {
-    		throw new IllegalStateException("Must be logged in");
-    	}
+    public void putPositions(@RequestBody final Position[] positions, final HttpSession session) {
+    	User user = getUser(session);
     	LOGGER.debug("Received {}", Arrays.asList(positions));
     	schedulerService.mergePositions(user, Arrays.asList(positions));
     }
     
     @RequestMapping(value = "/employees", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void putEmployees(@RequestBody Employee[] employees, HttpSession session) {
-    	User user;
-    	try {
-    		user = schedulerService.fetchOrSaveUser(session);
-    	} catch (RedirectException r) {
-    		throw new IllegalStateException("Must be logged in");
-    	}
+    public void putEmployees(@RequestBody final Employee[] employees, final HttpSession session) {
+    	User user = getUser(session);
     	LOGGER.debug("Received {}", Arrays.asList(employees));
     	schedulerService.mergeEmployees(user, Arrays.asList(employees));
+    }
+
+    @RequestMapping(value = "/shifts", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public void postShift(@RequestBody @Valid final ShiftDto shift, final HttpSession session) {
+    	User user = getUser(session);
+    	LOGGER.debug("Received {}", shift);
+    	schedulerService.saveShift(shift, user);
     }
     
     protected final String makeWeekLink(String yearAndWeek, int increment) {
@@ -101,6 +101,16 @@ public class ScheduleController {
         return YEAR_WEEK_FORMAT.format(cal.getTime());
     }
 
+	private User getUser(final HttpSession session) {
+		User user;
+    	try {
+    		user = schedulerService.fetchOrSaveUser(session);
+    	} catch (RedirectException r) {
+    		throw new IllegalStateException("Must be logged in");
+    	}
+		return user;
+	}
+    
     protected final Date getFirstDayOfWeek(String yearAndWeek) {
         final Calendar cal = Calendar.getInstance();
         if (yearAndWeek != null) {
