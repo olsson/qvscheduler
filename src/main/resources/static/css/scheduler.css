@@ -19,9 +19,13 @@
 	cursor: pointer;
 }
 
-#employeeBox ul {
+#employeeBox ul, .days ul {
 	list-style-type: none;
 	margin-left: 0;
+}
+
+.days {
+	padding-bottom: 5px;
 }
 
 #employeeBox li {
@@ -37,11 +41,25 @@ table .icon-plus {
 	cursor: pointer;
 }
 
-.startHour, .startMinute, .endHour, .endMinute {
+.days li {
 	display: inline-block;
+	width: 15px;
+	text-align: center;
 }
 
-.startHour, .startMinute, .endHour, .endMinute, .popover-content .position {
+.days li input {
+	margin-right: 15px;
+}
+
+.checkbox input[type="checkbox"] {
+	margin-left: 0px;
+}
+
+.checkbox {
+	padding-left: 50px;
+}
+
+.popover-content .position {
 	padding-bottom: 5px;
 }
 
@@ -57,8 +75,28 @@ table .icon-plus {
 	opacity: 0.5;
 }
 
+.icon-plus.dim {
+	opacity: 0.2;
+}
+
+.icon-plus.dim:hover {
+	opacity: 1;
+}
+
 @media print {
 	.donate, .icon-plus, .name-drop, .move-week {
 		display: none;
 	}	
+}
+
+.bootstrap-timepicker.open {
+	width: 178px;
+	display: block;
+	z-index: 2000;
+}
+
+.bootstrap-timepicker.open input {
+	width: 21px;
+	margin-left: 9px;
+	margin-top: 8px;
 }

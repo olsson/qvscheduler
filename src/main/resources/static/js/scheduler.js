@@ -22,28 +22,35 @@
 	Sched.addNewShift = function() {
 		var $popover = $(this).closest('.popover-content'),
 			position = $popover.find('.position .value').text(),
-			startHour = $popover.find('.startHour .value').text(),
-			startMinute = $popover.find('.startMinute .value').text(),
-			endHour = $popover.find('.endHour .value').text(),
-			endMinute = $popover.find('.endMinute .value').text(),
-			json = {};
+			startTime = $popover.find('.startTime input').val(),
+			endTime = $popover.find('.endTime input').val(),
+			$days = $popover.find('.days input'),
+			json = {}, daysSum = "", map = [1, 2, 4, 8, 16, 32, 64];
 		
 		if (position === 'Position') {
 			alert('Select a position');
 			return;
 		}
-		if (startHour === endHour && startMinute === endMinute) {
+		if (startTime === endTime) {
 			alert('Start and end times should be different');
 			return;
 		}
 		
+		daysSum += "[";
+		for (var i=0; i<$days.size(); i++) {
+			if ($days.eq(i).attr('checked') == 'checked') {
+				daysSum += '"' + (i + 1) + '",'; 
+			}
+		}
+		daysSum = daysSum.substring(0, daysSum.length-1);
+		daysSum += "]";
+		
 		json = '{ "employee" : "' + $(this).data('employee') + '", ' +
 				' "day" : "' + $(this).data('day') + '", ' +
 				' "position" : "' + position + '", ' +
-				' "startHour" : "' + startHour + '", ' +
-				' "startMinute" : "' + startMinute + '", ' +
-				' "endHour" : "' + endHour + '", ' +
-				' "endMinute" : "' + endMinute + '" }';
+				' "startTime" : "' + startTime + '", ' +
+				' "endTime" : "' + endTime + '", ' +
+				' "days" : ' + daysSum + ' }';
 		
 		$.ajax('shifts', 
 				{ data: json, 
@@ -70,15 +77,14 @@
 			visiblePopovers = $('table .icon-plus[data-visible="1"]').size(),
 			$form = $('.shift-template').clone().removeClass('hide shift-template');
 		
-		console.log(thisVisible);
-		console.log(visiblePopovers);
-		
 		if ((thisVisible == undefined || thisVisible == 0) && visiblePopovers >= 1) {
 			return;
 		}
 		
 		$form.find('.btn-primary').attr('data-employee', $elem.data('employee'));
 		$form.find('.btn-primary').attr('data-day', $elem.data('day'));
+		$form.find('.days input').eq($elem.data('pos')).attr('checked', 'checked');
+		
 		$elem.popover( { html: true,
 						placement: 'bottom',
 						content: $form.html(),
@@ -89,6 +95,9 @@
 			$elem.attr('data-visible', '0');
 		} else {
 			$elem.popover('show');
+			$('.popover-content .timepicker-default').each(function(idx, item){
+				$(item).timepicker();
+			});
 			$elem.attr('data-visible', '1');
 		}
 	};

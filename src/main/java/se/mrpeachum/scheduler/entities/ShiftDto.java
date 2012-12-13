@@ -3,19 +3,26 @@
  */
 package se.mrpeachum.scheduler.entities;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-
 /**
  * @author eolsson
- *
+ * 
  */
 public class ShiftDto {
 
+	private static final DateFormat DF = new SimpleDateFormat("hh:mm a"); 
+	
 	@NotNull
 	private String position;
-	
+
 	@NotNull
 	private Long day;
 
@@ -23,20 +30,15 @@ public class ShiftDto {
 	private Long employee;
 
 	@NotNull
-	@Pattern(regexp="[0-9]{1,2}")
-	private String startHour;
-	
+	@Pattern(regexp = "[0-9]{2}:[0-9]{2} (AM|PM)")
+	private String startTime;
+
 	@NotNull
-	@Pattern(regexp="(00|15|30|45)")
-	private String startMinute;
-	
+	@Pattern(regexp = "[0-9]{2}:[0-9]{2} (AM|PM)")
+	private String endTime;
+
 	@NotNull
-	@Pattern(regexp="[0-9]{1,2}")
-	private String endHour;
-	
-	@NotNull
-	@Pattern(regexp="(00|15|30|45)")
-	private String endMinute;
+	private String[] days;
 
 	public String getPosition() {
 		return position;
@@ -50,20 +52,39 @@ public class ShiftDto {
 		return employee;
 	}
 
-	public String getStartHour() {
-		return startHour;
+	public String getStartTime() {
+		return startTime;
 	}
 
-	public String getStartMinute() {
-		return startMinute;
-	}
-
-	public String getEndHour() {
-		return endHour;
-	}
-
-	public String getEndMinute() {
-		return endMinute;
+	public String getEndTime() {
+		return endTime;
 	}
 	
+	public Date getStartDate() {
+		Date d = null;
+		try {
+			d = DF.parse(this.startTime);
+		} catch (ParseException e) {
+			throw new IllegalStateException("Unable to parse date!", e);
+		}
+		return d;
+	}
+
+	public Date getEndDate() {
+		Date d = null;
+		try {
+			d = DF.parse(this.endTime);
+		} catch (ParseException e) {
+			throw new IllegalStateException("Unable to parse date!", e);
+		}
+		return d;
+	}
+	
+	public boolean shouldCopyToDayOfWeek(int dayOfWeek) {
+		return Arrays.asList(this.days).contains(Integer.toString(dayOfWeek));
+	}
+
+	public String[] getDays() {
+		return days;
+	}
 }

@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -112,7 +113,7 @@ public class ScheduleController {
 	}
     
     protected final Date getFirstDayOfWeek(String yearAndWeek) {
-        final Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance(Locale.US);
         if (yearAndWeek != null) {
             try {
                 cal.setTime(YEAR_WEEK_FORMAT.parse(yearAndWeek));

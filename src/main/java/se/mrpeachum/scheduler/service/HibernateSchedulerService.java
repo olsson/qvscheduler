@@ -5,9 +5,11 @@ package se.mrpeachum.scheduler.service;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -187,10 +189,15 @@ public class HibernateSchedulerService implements SchedulerService {
 	@Transactional(readOnly = false)
 	public void saveShift(ShiftDto dto, User user) {
 		Shift shift = new Shift();
-		shift.setStartHour(Integer.parseInt(dto.getStartHour()));
-		shift.setStartMinute(Integer.parseInt(dto.getStartMinute()));
-		shift.setEndHour(Integer.parseInt(dto.getEndHour()));
-		shift.setEndMinute(Integer.parseInt(dto.getEndMinute()));
+		Calendar cal = Calendar.getInstance(Locale.US);
+		
+		cal.setTime(dto.getStartDate());
+		shift.setStartHour(cal.get(Calendar.HOUR));
+		shift.setStartMinute(cal.get(Calendar.MINUTE));
+		
+		cal.setTime(dto.getEndDate());
+		shift.setEndHour(cal.get(Calendar.HOUR));
+		shift.setEndMinute(cal.get(Calendar.MINUTE));
 		
 		Employee emp = employeeDao.findById(dto.getEmployee());
 		Position pos = positionDao.findByNameAndUser(dto.getPosition(), user);

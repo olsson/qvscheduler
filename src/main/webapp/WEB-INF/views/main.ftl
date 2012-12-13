@@ -56,7 +56,7 @@
 										<#assign breakIcon = true>
 									</#list>
 									<#if breakIcon><br/></#if>
-									<i class="icon-plus" data-employee="${employee.id}" data-day="${day?c}"></i>
+									<i class="icon-plus dim" data-employee="${employee.id}" data-day="${day?c}" data-pos="${i}"></i>
 								</td>
 							</#list>  
 						</tr>
@@ -175,56 +175,35 @@
 			
 			<div>
 				Start: 
-				<div class="btn-group startHour">
-				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				    <span class="value">1</span>
-				    <span class="caret"></span>
-				  </a> 
-				  <ul class="dropdown-menu hour" role="menu" aria-labelledby="dropdownMenu">
-					<#list 1..12 as hour>
-						<li><a tabindex="-1" href="#">${hour}</a></li>
-					</#list>
-				  </ul>
-				</div>
-				<div class="btn-group startMinute">
-				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				    <span class="value">00</span>
-				    <span class="caret"></span>
-				  </a> 
-				  <ul class="dropdown-menu minute" role="menu" aria-labelledby="dropdownMenu">
-					<li><a tabindex="-1" href="#">00</a></li>
-					<li><a tabindex="-1" href="#">15</a></li>
-					<li><a tabindex="-1" href="#">30</a></li>
-					<li><a tabindex="-1" href="#">45</a></li>
-				  </ul>
+				<div class="input-append bootstrap-timepicker-component startTime">
+				    <input type="text" class="timepicker-default input-small">
+				    <span class="add-on">
+				        <i class="icon-time"></i>
+				    </span>
 				</div>
 			</div>
 			
 			<div>
 				End: 
-				<div class="btn-group endHour">
-				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				    <span class="value">1</span>
-				    <span class="caret"></span>
-				  </a>
-				  <ul class="dropdown-menu hour" role="menu" aria-labelledby="dropdownMenu">
-					<#list 1..12 as hour>
-						<li><a tabindex="-1" href="#">${hour}</a></li>
-					</#list>
-				  </ul>
+				<div class="input-append bootstrap-timepicker-component endTime">
+				    <input type="text" class="timepicker-default input-small">
+				    <span class="add-on">
+				        <i class="icon-time"></i>
+				    </span>
 				</div>
-				<div class="btn-group endMinute">
-				  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				    <span class="value">00</span>
-				    <span class="caret"></span>
-				  </a>
-				  <ul class="dropdown-menu minute" role="menu" aria-labelledby="dropdownMenu">
-					<li><a tabindex="-1" href="#">00</a></li>
-					<li><a tabindex="-1" href="#">15</a></li>
-					<li><a tabindex="-1" href="#">30</a></li>
-					<li><a tabindex="-1" href="#">45</a></li>
-				  </ul>
-				</div>
+			</div>
+			
+			<div class="days">
+				Days:
+				<ul>
+					<li><input type="checkbox"/>S</li>
+					<li><input type="checkbox"/>M</li>
+					<li><input type="checkbox"/>T</li>
+					<li><input type="checkbox"/>W</li>
+					<li><input type="checkbox"/>T</li>
+					<li><input type="checkbox"/>F</li>
+					<li><input type="checkbox"/>S</li>
+				</ul>
 			</div>
 			
 			<a href="#" class="btn btn-primary">Add</a>
@@ -235,6 +214,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 	<script src="static/js/bootstrap.js"></script>	
+	<script src="static/js/bootstrap-timepicker.js"></script>	
 	<script src="static/js/scheduler.js"></script>
 </html>
 
