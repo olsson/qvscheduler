@@ -222,11 +222,26 @@ public class HibernateSchedulerService implements SchedulerService {
 
 		Date day = new Date(dto.getDay() + ((dayOfWeek - 1) * ONE_DAY_MS));
 		shift.setDay(day);
+		shift.setUser(user);
 
 		shiftDao.save(shift);
+
 		LOGGER.debug("Added to: {}", day);
 		
+		pos.getShifts().add(shift);
+		positionDao.save(pos);
+		
 		emp.getShifts().add(shift);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteShift(Long id, User user) {
+		Shift shift = shiftDao.findById(id);
+		if (!shift.getUser().equals(user)) {
+			throw new IllegalStateException("Cannot delete a shift that user doesn't own");
+		}
+		shiftDao.delete(shift);
 	}
 	
 

@@ -17,6 +17,21 @@
 		$('table .icon-plus').bind("click", Sched.togglePopover);
 		$('.popover-content .dropdown-menu a').live("click", Sched.updateSelectedValue);
 		$('.popover-content .btn-primary').live("click", Sched.addNewShift);
+		
+		$('.labels .label').bind("click", Sched.deleteConfirmShift);
+	};
+	
+	Sched.deleteConfirmShift = function() {
+		var id = $(this).data('id');
+		if (confirm('Are you sure you want to delete this shift?')) {
+			$.ajax('shifts?id=' + id, 
+				{ type: 'DELETE',
+				  success: function() {
+					  location.reload();
+				  }
+				}
+			);
+		}
 	};
 	
 	Sched.addNewShift = function() {

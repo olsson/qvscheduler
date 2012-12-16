@@ -29,4 +29,6 @@ public interface SchedulerService {
 	List<Employee> getEmployees(User user);
 
 	void saveShift(ShiftDto shift, User user);
+
+	void deleteShift(Long id, User user);
 }

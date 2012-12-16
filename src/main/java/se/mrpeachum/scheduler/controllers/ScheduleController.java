@@ -94,6 +94,14 @@ public class ScheduleController {
     	schedulerService.saveShift(shift, user);
     }
     
+    @RequestMapping(value = "/shifts", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void postShift(@RequestParam final Long id, final HttpSession session) {
+    	User user = getUser(session);
+    	LOGGER.debug("Received delete request {}", id);
+    	schedulerService.deleteShift(id, user);
+    }
+    
     protected final String makeWeekLink(String yearAndWeek, int increment) {
         final Date firstDay = getFirstDayOfWeek(yearAndWeek);
         Calendar cal = Calendar.getInstance(Locale.US);

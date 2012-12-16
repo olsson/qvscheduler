@@ -49,7 +49,7 @@
 								<td class="labels">
 									<#assign day = (firstDayOfWeek?long) + (i * 86400000) />
 									<#list employee.getShiftsForDay(day?c) as shift>
-										<span class="label label-${shift.position.name?lower_case?replace(' ','')}">
+										<span class="label label-${shift.position.name?lower_case?replace(' ','')}" data-id="${shift.id}">
 											${shift.startHour}<#if shift.startMinute != 0>:${shift.startMinute}</#if>&mdash;${shift.endHour}<#if shift.endMinute != 0>:${shift.endMinute}</#if>
 										</span>
 									</#list>

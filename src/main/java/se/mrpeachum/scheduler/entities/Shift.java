@@ -41,6 +41,10 @@ public class Shift extends BaseEntity {
     
     @NotNull
     private Date day;
+    
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
     /**
      * @return the id
@@ -164,6 +168,14 @@ public class Shift extends BaseEntity {
         } else if (!id.equals(other.id))
             return false;
         return true;
-    } 
+    }
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	} 
     
 }
