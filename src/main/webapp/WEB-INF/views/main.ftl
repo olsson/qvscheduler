@@ -46,17 +46,14 @@
 							<td>${employee.firstName} ${employee.lastName}</td>
 							
 							<#list 0..6 as i>
-								<td>
+								<td class="labels">
 									<#assign day = (firstDayOfWeek?long) + (i * 86400000) />
-									<#assign breakIcon = false>
 									<#list employee.getShiftsForDay(day?c) as shift>
 										<span class="label label-${shift.position.name?lower_case?replace(' ','')}">
 											${shift.startHour}<#if shift.startMinute != 0>:${shift.startMinute}</#if>&mdash;${shift.endHour}<#if shift.endMinute != 0>:${shift.endMinute}</#if>
 										</span>
-										<#assign breakIcon = true>
 									</#list>
-									<#if breakIcon><br/></#if>
-									<i class="icon-plus dim" data-employee="${employee.id}" data-day="${day?c}" data-pos="${i}"></i>
+									<i class="icon-plus dim" data-employee="${employee.id}" data-day="${firstDayOfWeek?long?c}" data-pos="${i}"></i>
 								</td>
 							</#list>  
 						</tr>

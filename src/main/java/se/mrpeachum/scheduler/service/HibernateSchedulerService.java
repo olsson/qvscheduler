@@ -30,6 +30,7 @@ import org.springframework.web.client.RestOperations;
 import se.mrpeachum.scheduler.controllers.oauth.OAuth2Handler;
 import se.mrpeachum.scheduler.dao.EmployeeDao;
 import se.mrpeachum.scheduler.dao.PositionDao;
+import se.mrpeachum.scheduler.dao.ShiftDao;
 import se.mrpeachum.scheduler.dao.UserDao;
 import se.mrpeachum.scheduler.entities.Employee;
 import se.mrpeachum.scheduler.entities.Position;
@@ -58,7 +59,12 @@ public class HibernateSchedulerService implements SchedulerService {
 	@Autowired
 	private EmployeeDao employeeDao;
 	
+	@Autowired
+	private ShiftDao shiftDao;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSchedulerService.class);
+	
+	private static final int ONE_DAY_MS = 86_400_000;
 	
 	/* (non-Javadoc)
 	 * @see se.mrpeachum.scheduler.service.SchedulerService#fetchOrSaveUser(javax.servlet.http.HttpSession)
@@ -188,6 +194,19 @@ public class HibernateSchedulerService implements SchedulerService {
 	@Override
 	@Transactional(readOnly = false)
 	public void saveShift(ShiftDto dto, User user) {
+		Employee emp = employeeDao.findById(dto.getEmployee());
+		Position pos = positionDao.findByNameAndUser(dto.getPosition(), user);
+		
+		for (int i=1; i<=6; i++) {
+			if (dto.shouldCopyToDayOfWeek(i)) {
+				LOGGER.debug("Adding shift to day #{}", i);
+				addShiftForDay(dto, user, i, emp, pos);
+			}
+		}
+		employeeDao.save(emp);
+	}
+
+	private void addShiftForDay(final ShiftDto dto, final User user, final int dayOfWeek, final Employee emp, final Position pos) {
 		Shift shift = new Shift();
 		Calendar cal = Calendar.getInstance(Locale.US);
 		
@@ -198,16 +217,16 @@ public class HibernateSchedulerService implements SchedulerService {
 		cal.setTime(dto.getEndDate());
 		shift.setEndHour(cal.get(Calendar.HOUR));
 		shift.setEndMinute(cal.get(Calendar.MINUTE));
-		
-		Employee emp = employeeDao.findById(dto.getEmployee());
-		Position pos = positionDao.findByNameAndUser(dto.getPosition(), user);
 
-		Date day = new Date(dto.getDay());
-		shift.setDay(Normalizer.dateNormalizer(day));
-		
 		shift.setPosition(pos);
+
+		Date day = new Date(dto.getDay() + ((dayOfWeek - 1) * ONE_DAY_MS));
+		shift.setDay(day);
+
+		shiftDao.save(shift);
+		LOGGER.debug("Added to: {}", day);
+		
 		emp.getShifts().add(shift);
-		employeeDao.save(emp);
 	}
 	
 

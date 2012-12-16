@@ -14,6 +14,4 @@ import se.mrpeachum.scheduler.entities.Shift;
  */
 public interface ShiftDao extends Dao<Shift> {
 
-	List<Shift> getForWeek(Date startDate);
-	
 }

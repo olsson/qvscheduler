@@ -100,3 +100,11 @@ table .icon-plus {
 	margin-left: 9px;
 	margin-top: 8px;
 }
+
+table .labels span, table .labels i {
+	display: inline-block;
+	text-align: center;
+	float: left;
+	clear: both;
+	margin-bottom: 3px;
+}

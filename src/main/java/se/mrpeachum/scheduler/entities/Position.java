@@ -3,11 +3,15 @@
  */
 package se.mrpeachum.scheduler.entities;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * @author mrpeachum
@@ -27,6 +31,9 @@ public class Position extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
+    
+    @OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true)
+    private Set<Shift> shifts; 
 
     /**
      * @return the id

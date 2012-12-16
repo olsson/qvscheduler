@@ -65,8 +65,8 @@ public class ScheduleController {
         model.addAttribute("positions", schedulerService.getPositions(user));
         model.addAttribute("employees", schedulerService.getEmployees(user));
         model.addAttribute("firstDayOfWeek", getFirstDayOfWeek(yearAndWeek));
-        model.addAttribute("nextWeek", makeWeekLink(yearAndWeek, 1));
-        model.addAttribute("previousWeek", makeWeekLink(yearAndWeek, -1));
+        model.addAttribute("nextWeek", makeWeekLink(yearAndWeek, 2));
+        model.addAttribute("previousWeek", makeWeekLink(yearAndWeek, 0));
         return "main";
     }
 
@@ -96,7 +96,7 @@ public class ScheduleController {
     
     protected final String makeWeekLink(String yearAndWeek, int increment) {
         final Date firstDay = getFirstDayOfWeek(yearAndWeek);
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(Locale.US);
         cal.setTime(firstDay);
         cal.add(Calendar.WEEK_OF_YEAR, increment);
         return YEAR_WEEK_FORMAT.format(cal.getTime());
@@ -126,6 +126,10 @@ public class ScheduleController {
         }
         
         cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
 

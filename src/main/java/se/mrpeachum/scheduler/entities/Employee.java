@@ -37,7 +37,7 @@ public class Employee extends BaseEntity implements Comparable<Employee> {
 
 	private String lastName;
 
-	@OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<Shift> shifts;
 
 	@Column(name = "sortOrder")

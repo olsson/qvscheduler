@@ -4,10 +4,12 @@
 package se.mrpeachum.scheduler.entities;
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -18,7 +20,7 @@ import javax.validation.constraints.Pattern;
  */
 public class ShiftDto {
 
-	private static final DateFormat DF = new SimpleDateFormat("hh:mm a"); 
+	private static final DateFormat DF = new SimpleDateFormat("hh:mm a", DateFormatSymbols.getInstance(Locale.US)); 
 	
 	@NotNull
 	private String position;
@@ -86,5 +88,11 @@ public class ShiftDto {
 
 	public String[] getDays() {
 		return days;
+	}
+
+	@Override
+	public String toString() {
+		return "ShiftDto [position=" + position + ", day=" + day + ", employee=" + employee + ", startTime="
+				+ startTime + ", endTime=" + endTime + ", days=" + Arrays.toString(days) + "]";
 	}
 }
