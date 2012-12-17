@@ -16,13 +16,11 @@
 				<div class="span6 header-row"><a href="?w=${previousWeek}" class="move-week">&laquo;</a> <span>${firstDayOfWeek?string('MMMM, yyyy')}, Week ${firstDayOfWeek?string('w')}</span> <a href="?w=${nextWeek}" class="move-week">&raquo;</a></div>
 				<div class="span2 offset4">
 					<div class="btn-group pull-right name-drop">
-					  <a class="btn btn-primary" href="#">${user.name} (${user.email})</a>
+					  <a class="btn btn-primary" href="#">${user.name}</a>
 					  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
 					  <ul class="dropdown-menu">
 						<li><a href="#employeeBox" role="button" data-toggle="modal"><i class="icon-user"></i> Staff</a></li>
 						<li><a href="#positionBox" role="button" data-toggle="modal"><i class="icon-briefcase"></i> Positions</a></li>
-						<li class="divider"></li>
-						<li><a href="#"><i class="i"></i> Logout</a></li>
 					  </ul>
 					</div>
 				</div>		

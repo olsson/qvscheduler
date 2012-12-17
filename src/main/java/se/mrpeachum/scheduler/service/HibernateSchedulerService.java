@@ -229,9 +229,9 @@ public class HibernateSchedulerService implements SchedulerService {
 			final Employee emp, final Position pos) {
 		Shift shift = new Shift();
 
-		shift.setStartHour(startHour);
+		shift.setStartHour((startHour == 0 ? 12 : startHour));
 		shift.setStartMinute(startMinute);
-		shift.setEndHour(endHour);
+		shift.setEndHour((endHour == 0 ? 12 : endHour));
 		shift.setEndMinute(endMinute);
 
 		shift.setPosition(pos);
@@ -278,7 +278,7 @@ public class HibernateSchedulerService implements SchedulerService {
 		LOGGER.debug("Copying shifts from week {} to week {} for employee {}", new Object[]{fromWeek, toWeek, employeeId});
 
 		for (int i = 1; i <= 7; i++) {
-			Date dayCheck = new Date(fromWeek.getTime() + ((i - 1) * ONE_DAY_MS));
+			Date dayCheck = new Date(fromWeek.getTime() + (i * ONE_DAY_MS));
 			List<Shift> shifts = emp.getShiftsForDayMillis(dayCheck.getTime());
 			LOGGER.debug("Day {} ({}): {} shifts to copy", new Object[]{i, dayCheck, shifts.size()});
 			for (Shift s : shifts) {
