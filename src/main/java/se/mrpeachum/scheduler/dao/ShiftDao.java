@@ -3,9 +3,8 @@
  */
 package se.mrpeachum.scheduler.dao;
 
-import java.util.Date;
-import java.util.List;
-
+import se.mrpeachum.scheduler.entities.Employee;
+import se.mrpeachum.scheduler.entities.Position;
 import se.mrpeachum.scheduler.entities.Shift;
 
 /**
@@ -14,4 +13,8 @@ import se.mrpeachum.scheduler.entities.Shift;
  */
 public interface ShiftDao extends Dao<Shift> {
 
+	void deleteForPositionId(Position position);
+	
+	void deleteForEmployeeId(Employee employee);
+	
 }

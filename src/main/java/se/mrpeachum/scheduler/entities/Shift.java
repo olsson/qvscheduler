@@ -27,6 +27,10 @@ public class Shift extends BaseEntity {
     @JoinColumn(name = "positionId")
     private Position position;
     
+    @ManyToOne
+    @JoinColumn(name = "employeeId")
+    private Employee employee;
+    
     @NotNull
     private Integer startHour;
     
@@ -176,6 +180,14 @@ public class Shift extends BaseEntity {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
 	} 
     
 }

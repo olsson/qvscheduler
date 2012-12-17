@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -131,6 +132,7 @@ public class HibernateSchedulerService implements SchedulerService {
 		}
 		// delete the removed positions
 		for (Position pos : positionsToRemove) {
+			shiftDao.deleteForPositionId(pos);
 			positionDao.delete(pos);
 		}
 		for (Position newPosition: newPositions) {
@@ -163,6 +165,7 @@ public class HibernateSchedulerService implements SchedulerService {
 		}
 		
 		for (Employee emp: remove) {
+			shiftDao.deleteForEmployeeId(emp);
 			employeeDao.delete(emp);
 		}
 		
@@ -223,13 +226,11 @@ public class HibernateSchedulerService implements SchedulerService {
 		Date day = new Date(dto.getDay() + ((dayOfWeek - 1) * ONE_DAY_MS));
 		shift.setDay(day);
 		shift.setUser(user);
+		shift.setEmployee(emp);
 
 		shiftDao.save(shift);
 
 		LOGGER.debug("Added to: {}", day);
-		
-		pos.getShifts().add(shift);
-		positionDao.save(pos);
 		
 		emp.getShifts().add(shift);
 	}
@@ -241,6 +242,16 @@ public class HibernateSchedulerService implements SchedulerService {
 		if (!shift.getUser().equals(user)) {
 			throw new IllegalStateException("Cannot delete a shift that user doesn't own");
 		}
+		Employee emp = shift.getEmployee();
+		for (Iterator<Shift> iter = emp.getShifts().iterator(); iter.hasNext();) {
+			if (iter.next().equals(shift)) {
+				iter.remove();
+			}
+		}
+		// remove the link to this shift from the employee
+		employeeDao.save(emp);
+		
+		// then remove the shift
 		shiftDao.delete(shift);
 	}
 	

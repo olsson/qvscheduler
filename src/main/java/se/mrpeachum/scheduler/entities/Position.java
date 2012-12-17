@@ -32,9 +32,6 @@ public class Position extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
-    
-    @OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true)
-    private Set<Shift> shifts; 
 
     /**
      * @return the id
@@ -116,12 +113,5 @@ public class Position extends BaseEntity {
             return false;
         return true;
     }
-
-	public Set<Shift> getShifts() {
-		if (shifts == null) {
-			shifts = new HashSet<>();
-		}
-		return shifts;
-	}
     
 }
