@@ -75,11 +75,12 @@ table .icon-plus {
 	opacity: 0.5;
 }
 
-.icon-plus.dim {
+i.dim {
 	opacity: 0.2;
+	cursor: pointer;
 }
 
-.icon-plus.dim:hover {
+i.dim:hover {
 	opacity: 1;
 }
 
@@ -107,4 +108,7 @@ table .labels span, table .labels i {
 	float: left;
 	clear: both;
 	margin-bottom: 3px;
+}
+.btn-group.copy {
+	margin-bottom: 5px;
 }

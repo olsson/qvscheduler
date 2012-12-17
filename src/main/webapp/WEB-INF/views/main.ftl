@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="styleGenerator" type="text/css"/>
 	</head>
 
-	<body>
+	<body data-week="${firstDayOfWeek?string('yyyyw')}">
 		
 		<div class="container">
 
@@ -43,7 +43,7 @@
 				<tbody>
 					<#list employees as employee>
 						<tr>
-							<td>${employee.firstName} ${employee.lastName}</td>
+							<td><i class="icon-repeat dim" data-employee="${employee.id}" data-week="${firstDayOfWeek?string('yyyyw')}"></i> ${employee.firstName} ${employee.lastName}</td>
 							
 							<#list 0..6 as i>
 								<td class="labels">
@@ -203,7 +203,23 @@
 				</ul>
 			</div>
 			
-			<a href="#" class="btn btn-primary">Add</a>
+			<a href="#" class="btn btn-primary shift">Add</a>
+		</div>
+		
+		<div class="copy-popover hide">
+			<div class="btn-group copy">
+			  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			    <span class="value">Copy From Week</span>
+			    <span class="caret"></span>
+			  </a>
+				<ul class="dropdown-menu copy" role="menu" aria-labelledby="dropdownMenu">
+					<#list 1..10 as i>
+						<#assign day = (firstDayOfWeek?long) - (i * 604800000) />
+						<li><a tabindex="-1" href="#">${day?number_to_date?string('MMM d, yyyy (w)')}</a></li>							
+					</#list>
+				</ul>
+			</div>
+			<a href="#" class="btn btn-primary copy">Copy</a>
 		</div>
 		
 	</body>

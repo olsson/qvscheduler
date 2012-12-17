@@ -4,6 +4,9 @@
 package se.mrpeachum.scheduler.service;
 
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -42,7 +45,7 @@ import se.mrpeachum.scheduler.exception.RedirectException;
 
 /**
  * @author eolsson
- *
+ * 
  */
 @Service
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -50,66 +53,73 @@ public class HibernateSchedulerService implements SchedulerService {
 
 	@Autowired
 	private RestOperations googleRestTemplate;
-	
+
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private PositionDao positionDao;
-	
+
 	@Autowired
 	private EmployeeDao employeeDao;
-	
+
 	@Autowired
 	private ShiftDao shiftDao;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSchedulerService.class);
-	
+
 	private static final int ONE_DAY_MS = 86_400_000;
-	
-	/* (non-Javadoc)
-	 * @see se.mrpeachum.scheduler.service.SchedulerService#fetchOrSaveUser(javax.servlet.http.HttpSession)
+
+	private static final DateFormat YEAR_WEEK_FORMAT = new SimpleDateFormat("YYYYww");
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * se.mrpeachum.scheduler.service.SchedulerService#fetchOrSaveUser(javax
+	 * .servlet.http.HttpSession)
 	 */
 	@Override
 	@Transactional(readOnly = false)
 	public User fetchOrSaveUser(HttpSession session) {
 		ObjectNode res = null;
-        try {
-            String code = (String) session.getAttribute(OAuth2Handler.AUTH_CODE);
-            if (code != null) {
-                ((OAuth2RestTemplate) googleRestTemplate).getOAuth2ClientContext().getAccessTokenRequest().setAuthorizationCode(code);
-            }
-            res = googleRestTemplate.getForObject("https://www.googleapis.com/oauth2/v1/userinfo", ObjectNode.class);
-        } catch (UserRedirectRequiredException redirectException) {
-            try {
-                URIBuilder builder = new URIBuilder(redirectException.getRedirectUri());
-                for (Map.Entry<String, String> entry : redirectException.getRequestParams().entrySet()) {
-                    builder.addParameter(entry.getKey(), entry.getValue());
-                }
-                throw new RedirectException("redirect:" + builder.build());
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-        	session.invalidate();
-        	throw new RedirectException("redirect:");
-        }
-        TextNode name = (TextNode) res.get("name");
-        TextNode email = (TextNode) res.get("email");
-        TextNode id = (TextNode) res.get("id");
-        
+		try {
+			String code = (String) session.getAttribute(OAuth2Handler.AUTH_CODE);
+			if (code != null) {
+				((OAuth2RestTemplate) googleRestTemplate).getOAuth2ClientContext().getAccessTokenRequest()
+						.setAuthorizationCode(code);
+			}
+			res = googleRestTemplate.getForObject("https://www.googleapis.com/oauth2/v1/userinfo", ObjectNode.class);
+		} catch (UserRedirectRequiredException redirectException) {
+			try {
+				URIBuilder builder = new URIBuilder(redirectException.getRedirectUri());
+				for (Map.Entry<String, String> entry : redirectException.getRequestParams().entrySet()) {
+					builder.addParameter(entry.getKey(), entry.getValue());
+				}
+				throw new RedirectException("redirect:" + builder.build());
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			session.invalidate();
+			throw new RedirectException("redirect:");
+		}
+		TextNode name = (TextNode) res.get("name");
+		TextNode email = (TextNode) res.get("email");
+		TextNode id = (TextNode) res.get("id");
+
 		User user = userDao.findByAccountId(id.asText());
-        
-        if (user == null) {
-        	user = new User();
-        	user.setAccountId(id.asText());
-        	user.setName(name.asText());
-        	user.setEmail(email.asText());
-        	userDao.save(user);
-        	userDao.flush();
-        }
-        
-        return user;
+
+		if (user == null) {
+			user = new User();
+			user.setAccountId(id.asText());
+			user.setName(name.asText());
+			user.setEmail(email.asText());
+			userDao.save(user);
+			userDao.flush();
+		}
+
+		return user;
 	}
 
 	@Override
@@ -135,7 +145,7 @@ public class HibernateSchedulerService implements SchedulerService {
 			shiftDao.deleteForPositionId(pos);
 			positionDao.delete(pos);
 		}
-		for (Position newPosition: newPositions) {
+		for (Position newPosition : newPositions) {
 			if (existingPositions.contains(newPosition)) {
 				for (Position existingPos : existingPositions) {
 					if (existingPos.getId() == newPosition.getId()) {
@@ -157,22 +167,22 @@ public class HibernateSchedulerService implements SchedulerService {
 	public void mergeEmployees(User user, List<Employee> newEmployees) {
 		List<Employee> existingEmployees = employeeDao.getEmployeesForUser(user);
 		List<Employee> remove = new ArrayList<>();
-		
-		for (Employee emp: existingEmployees) {
+
+		for (Employee emp : existingEmployees) {
 			if (!newEmployees.contains(emp)) {
 				remove.add(emp);
 			}
 		}
-		
-		for (Employee emp: remove) {
+
+		for (Employee emp : remove) {
 			shiftDao.deleteForEmployeeId(emp);
 			employeeDao.delete(emp);
 		}
-		
+
 		int i = 0;
-		for (Employee emp: newEmployees) {
+		for (Employee emp : newEmployees) {
 			if (existingEmployees.contains(emp)) {
-				for (Employee existing: existingEmployees) {
+				for (Employee existing : existingEmployees) {
 					if (existing.equals(emp)) {
 						existing.setOrder(i++);
 						employeeDao.save(existing);
@@ -199,31 +209,34 @@ public class HibernateSchedulerService implements SchedulerService {
 	public void saveShift(ShiftDto dto, User user) {
 		Employee emp = employeeDao.findById(dto.getEmployee());
 		Position pos = positionDao.findByNameAndUser(dto.getPosition(), user);
-		
-		for (int i=1; i<=6; i++) {
+		Calendar startDate = Calendar.getInstance(Locale.US);
+		startDate.setTime(dto.getStartDate());
+		Calendar endDate = Calendar.getInstance(Locale.US);
+		endDate.setTime(dto.getEndDate());
+
+		for (int i = 1; i <= 7; i++) {
 			if (dto.shouldCopyToDayOfWeek(i)) {
 				LOGGER.debug("Adding shift to day #{}", i);
-				addShiftForDay(dto, user, i, emp, pos);
+				addShiftForDay(startDate.get(Calendar.HOUR), startDate.get(Calendar.MINUTE),
+						endDate.get(Calendar.HOUR), endDate.get(Calendar.MINUTE), dto.getDay(), user, i, emp, pos);
 			}
 		}
 		employeeDao.save(emp);
 	}
 
-	private void addShiftForDay(final ShiftDto dto, final User user, final int dayOfWeek, final Employee emp, final Position pos) {
+	private void addShiftForDay(final Integer startHour, final Integer startMinute, final Integer endHour,
+			final Integer endMinute, final long firstDayOfWeek, final User user, final int dayOfWeek,
+			final Employee emp, final Position pos) {
 		Shift shift = new Shift();
-		Calendar cal = Calendar.getInstance(Locale.US);
-		
-		cal.setTime(dto.getStartDate());
-		shift.setStartHour(cal.get(Calendar.HOUR));
-		shift.setStartMinute(cal.get(Calendar.MINUTE));
-		
-		cal.setTime(dto.getEndDate());
-		shift.setEndHour(cal.get(Calendar.HOUR));
-		shift.setEndMinute(cal.get(Calendar.MINUTE));
+
+		shift.setStartHour(startHour);
+		shift.setStartMinute(startMinute);
+		shift.setEndHour(endHour);
+		shift.setEndMinute(endMinute);
 
 		shift.setPosition(pos);
 
-		Date day = new Date(dto.getDay() + ((dayOfWeek - 1) * ONE_DAY_MS));
+		Date day = new Date(firstDayOfWeek + ((dayOfWeek - 1) * ONE_DAY_MS));
 		shift.setDay(day);
 		shift.setUser(user);
 		shift.setEmployee(emp);
@@ -231,7 +244,7 @@ public class HibernateSchedulerService implements SchedulerService {
 		shiftDao.save(shift);
 
 		LOGGER.debug("Added to: {}", day);
-		
+
 		emp.getShifts().add(shift);
 	}
 
@@ -250,10 +263,30 @@ public class HibernateSchedulerService implements SchedulerService {
 		}
 		// remove the link to this shift from the employee
 		employeeDao.save(emp);
-		
+
 		// then remove the shift
 		shiftDao.delete(shift);
 	}
-	
+
+	@Override
+	@Transactional(readOnly = false)
+	public void copyShifts(Long employeeId, Date fromWeek, Date toWeek, User user) throws Exception {
+		Employee emp = employeeDao.findById(employeeId);
+		if (!emp.getUser().equals(user)) {
+			throw new IllegalStateException("Cannot copy shifts that user doesn't own");
+		}
+		LOGGER.debug("Copying shifts from week {} to week {} for employee {}", new Object[]{fromWeek, toWeek, employeeId});
+
+		for (int i = 1; i <= 7; i++) {
+			Date dayCheck = new Date(fromWeek.getTime() + ((i - 1) * ONE_DAY_MS));
+			List<Shift> shifts = emp.getShiftsForDayMillis(dayCheck.getTime());
+			LOGGER.debug("Day {} ({}): {} shifts to copy", new Object[]{i, dayCheck, shifts.size()});
+			for (Shift s : shifts) {
+				this.addShiftForDay(s.getStartHour(), s.getStartMinute(), s.getEndHour(), s.getEndMinute(),
+						toWeek.getTime(), user, i, emp, s.getPosition());
+			}
+		}
+		employeeDao.save(emp);
+	}
 
 }

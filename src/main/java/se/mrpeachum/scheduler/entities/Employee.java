@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,8 +19,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 import se.mrpeachum.scheduler.service.Normalizer;
@@ -127,6 +126,10 @@ public class Employee extends BaseEntity implements Comparable<Employee> {
 
 	public List<Shift> getShiftsForDay(String millisString) {
 		Long millis = Long.parseLong(millisString);
+		return getShiftsForDayMillis(millis);
+	}
+
+	public List<Shift> getShiftsForDayMillis(Long millis) {
 		Date day = Normalizer.dateNormalizer(new Date(millis));
 		List<Shift> shifts = new ArrayList<>();
 		Calendar shiftCal = Calendar.getInstance(Locale.ENGLISH);

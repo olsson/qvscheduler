@@ -3,6 +3,7 @@
  */
 package se.mrpeachum.scheduler.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -31,4 +32,6 @@ public interface SchedulerService {
 	void saveShift(ShiftDto shift, User user);
 
 	void deleteShift(Long id, User user);
+	
+	void copyShifts(Long employeeId, Date fromWeek, Date toWeek, User user) throws Exception;
 }

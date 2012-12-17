@@ -16,9 +16,35 @@
 		
 		$('table .icon-plus').bind("click", Sched.togglePopover);
 		$('.popover-content .dropdown-menu a').live("click", Sched.updateSelectedValue);
-		$('.popover-content .btn-primary').live("click", Sched.addNewShift);
+		$('.popover-content .btn-primary.shift').live("click", Sched.addNewShift);
 		
 		$('.labels .label').bind("click", Sched.deleteConfirmShift);
+		$('.icon-repeat').each(Sched.initCopyPopovers);
+		$('.popover-content .btn-primary.copy').live("click", Sched.copyShift);
+	};
+	
+	Sched.copyShift = function() {
+		var $value = $(this).closest('p').find('.value'),
+			empId = $value.attr('data-employee');
+		
+		$.ajax('copy?employeeId=' + empId + '&toWeek=' + $('body').data('week') + '&fromWeek=' + encodeURI($value.text()), 
+				{ type: 'POST',
+				  success: function() {
+					  location.reload();
+				  }
+				}
+			);
+	};
+	
+	Sched.initCopyPopovers = function() {
+		var empId = $(this).data('employee'),
+			$template = $('.copy-popover').clone().removeClass('hide');
+		
+		$template.find('.btn-group .value').attr('data-employee', empId);
+		$(this).popover( { html: true,
+			placement: 'bottom',
+			content: $template.html(),
+			title: 'Copy Shifts'} );
 	};
 	
 	Sched.deleteConfirmShift = function() {
@@ -40,7 +66,7 @@
 			startTime = $popover.find('.startTime input').val(),
 			endTime = $popover.find('.endTime input').val(),
 			$days = $popover.find('.days input'),
-			json = {}, daysSum = "", map = [1, 2, 4, 8, 16, 32, 64];
+			json = {}, daysSum = "";
 		
 		if (position === 'Position') {
 			alert('Select a position');

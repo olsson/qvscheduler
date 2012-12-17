@@ -4,6 +4,7 @@
 package se.mrpeachum.scheduler.controllers;
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -44,6 +45,8 @@ public class ScheduleController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleController.class);
 
     private static final DateFormat YEAR_WEEK_FORMAT = new SimpleDateFormat("YYYYww");
+
+    private static final DateFormat PRETTY_WEEK_FORMAT = new SimpleDateFormat("MMM d, yyyy (w)", DateFormatSymbols.getInstance(Locale.US));
 
     private SchedulerService schedulerService;
     
@@ -100,6 +103,18 @@ public class ScheduleController {
     	User user = getUser(session);
     	LOGGER.debug("Received delete request {}", id);
     	schedulerService.deleteShift(id, user);
+    }
+    
+    @RequestMapping(value = "/copy", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void copyShifts(@RequestParam final Long employeeId, @RequestParam final String fromWeek, @RequestParam final String toWeek,
+    		final HttpSession session) throws Exception {
+    	User user = getUser(session);
+    	LOGGER.debug("Got request to copy shifts for emp id {} from week {} to week {} for user {}", 
+    			new Object[]{employeeId, fromWeek, toWeek, user});
+    	Date fromParsed = PRETTY_WEEK_FORMAT.parse(fromWeek);
+    	Date toParsed = YEAR_WEEK_FORMAT.parse(toWeek);
+    	schedulerService.copyShifts(employeeId, fromParsed, toParsed, user);
     }
     
     protected final String makeWeekLink(String yearAndWeek, int increment) {
