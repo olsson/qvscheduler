@@ -40,6 +40,11 @@
 		<property name="templateLoaderPath">
 			<value>/WEB-INF/views/</value>
 		</property>
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="locale">en_US</prop>
+			</props>
+		</property>
 	</bean>
 
 </beans>

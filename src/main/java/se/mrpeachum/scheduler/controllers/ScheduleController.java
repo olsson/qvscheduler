@@ -68,8 +68,8 @@ public class ScheduleController {
         model.addAttribute("positions", schedulerService.getPositions(user));
         model.addAttribute("employees", schedulerService.getEmployees(user));
         model.addAttribute("firstDayOfWeek", getFirstDayOfWeek(yearAndWeek));
-        model.addAttribute("nextWeek", makeWeekLink(yearAndWeek, 2));
-        model.addAttribute("previousWeek", makeWeekLink(yearAndWeek, 0));
+        model.addAttribute("nextWeek", makeWeekLink(yearAndWeek, 1));
+        model.addAttribute("previousWeek", makeWeekLink(yearAndWeek, -1));
         return "main";
     }
 
@@ -122,7 +122,10 @@ public class ScheduleController {
         Calendar cal = Calendar.getInstance(Locale.US);
         cal.setTime(firstDay);
         cal.add(Calendar.WEEK_OF_YEAR, increment);
-        return YEAR_WEEK_FORMAT.format(cal.getTime());
+        String week = Integer.toString(cal.get(Calendar.WEEK_OF_YEAR));
+        cal.add(Calendar.DATE, 7);
+        String year = Integer.toString(cal.get(Calendar.YEAR));
+        return year + week;
     }
 
 	private User getUser(final HttpSession session) {

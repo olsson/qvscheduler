@@ -7,14 +7,18 @@
 		<link rel="stylesheet" href="styleGenerator" type="text/css"/>
 	</head>
 
-	<body data-week="${firstDayOfWeek?string('yyyyw')}">
+	<#assign lastDayOfWeek = (firstDayOfWeek?long + (6 * 86400000))?number_to_date />
+
+	<body data-week="${firstDayOfWeek?string('yyyyww')}">
 		
 		<div class="container">
-
 			<div class="row title-and-user">
-				
-				<div class="span6 header-row"><a href="?w=${previousWeek}" class="move-week">&laquo;</a> <span>${firstDayOfWeek?string('MMMM, yyyy')}, Week ${firstDayOfWeek?string('w')}</span> <a href="?w=${nextWeek}" class="move-week">&raquo;</a></div>
-				<div class="span2 offset4">
+				<div class="span8 header-row">
+					<a href="?w=${previousWeek}" class="move-week">&laquo;</a> 
+					<span>${lastDayOfWeek?string('MMMM, yyyy')}, Week ${lastDayOfWeek?string('w')}</span> 
+					<a href="?w=${nextWeek}" class="move-week">&raquo;</a>
+				</div>
+				<div class="span2 offset2">
 					<div class="btn-group pull-right name-drop">
 					  <a class="btn btn-primary" href="#">${user.name}</a>
 					  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
@@ -67,29 +71,29 @@
 			
 			<#if employees?size == 0 && positions?size == 0>
 				<div class="row">
-					<div class="span8 offset2 rounded">
-						<h2>It looks like you're new to Quick View Scheduler</h2>
-						<p>To get started, click on the arrow by your name and add some <strong>Positions</strong> and <strong>Staff</strong>.</p>
+					<div class="span8 alert alert-block offset2 rounded">
+					  <h3>It looks like you're new to Quick View Scheduler</h3>
+					  <p>To get started, click on the arrow by your name and add some <strong>Positions</strong> and <strong>Staff</strong>.</p>
 					</div>
 				</div>
 			<#elseif employees?size == 0>
 				<div class="row">
-					<div class="span8 offset2 rounded">
-						<h2>You're doing great</h2>
+					<div class="span8 alert alert-block offset2 rounded">
+						<h3>You're doing great</h3>
 						<p>Now add some <strong>Staff</strong>.</p>
 					</div>
 				</div>	
 			<#elseif positions?size == 0>
 				<div class="row">
-					<div class="span8 offset2 rounded">
-						<h2>You're doing great</h2>
+					<div class="span8 alert alert-block offset2 rounded">
+						<h3>You're doing great</h3>
 						<p>Now add some <strong>Positions</strong>.</p>
 					</div>
 				</div>				
 			<#elseif shiftsOnPage == 0>
 				<div class="row">
-					<div class="span8 offset2 rounded">
-						<h2>Add some shifts</h2>
+					<div class="span8 alert alert-block offset2 rounded">
+						<h3>Add some shifts</h3>
 						<p>Click the <i class="icon-plus"></i> icon to add a shift. You can also click the <i class="icon-repeat"></i> icon to copy shifts from a previous week.</p>
 					</div>
 				</div>				

@@ -136,8 +136,9 @@
 			$elem.attr('data-visible', '0');
 		} else {
 			$elem.popover('show');
-			$('.popover-content .timepicker-default').each(function(idx, item){
-				$(item).timepicker();
+			$('.popover-content input.timepicker-default').each(function(idx, item){
+				console.log(item);
+				$(item).timepicker({disableFocus: true});
 			});
 			$elem.attr('data-visible', '1');
 		}
