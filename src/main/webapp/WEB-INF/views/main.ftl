@@ -26,6 +26,8 @@
 				</div>		
 			</div>
 			
+			<#assign shiftsOnPage = 0 />
+			
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
@@ -41,17 +43,20 @@
 				<tbody>
 					<#list employees as employee>
 						<tr>
-							<td><i class="icon-repeat dim" data-employee="${employee.id}" data-week="${firstDayOfWeek?string('yyyyw')}"></i> ${employee.firstName} ${employee.lastName}</td>
+							<td><#if (positions?size > 0)><i class="icon-repeat dim" data-employee="${employee.id}" data-week="${firstDayOfWeek?string('yyyyw')}"></i></#if> ${employee.firstName} ${employee.lastName}</td>
 							
 							<#list 0..6 as i>
 								<td class="labels">
 									<#assign day = (firstDayOfWeek?long) + (i * 86400000) />
 									<#list employee.getShiftsForDay(day?c) as shift>
-										<span class="label label-${shift.position.name?lower_case?replace(' ','')}" data-id="${shift.id}">
+										<#assign shiftsOnPage = shiftsOnPage + 1 /> 
+										<span class="label label-${shift.position.name?lower_case?replace(' ','')}" data-id="${shift.id}" title="Click to delete shift">
 											${shift.startHour}<#if shift.startMinute != 0>:${shift.startMinute}</#if>&mdash;${shift.endHour}<#if shift.endMinute != 0>:${shift.endMinute}</#if>
 										</span>
 									</#list>
-									<i class="icon-plus dim" data-employee="${employee.id}" data-day="${firstDayOfWeek?long?c}" data-pos="${i}"></i>
+									<#if (positions?size > 0)>
+										<i class="icon-plus dim" data-employee="${employee.id}" data-day="${firstDayOfWeek?long?c}" data-pos="${i}"></i>
+									</#if>
 								</td>
 							</#list>  
 						</tr>
@@ -64,9 +69,30 @@
 				<div class="row">
 					<div class="span8 offset2 rounded">
 						<h2>It looks like you're new to Quick View Scheduler</h2>
-						<p>To get started, click on the triangle next to your name and create some <strong>Positions</strong> and add some <strong>Staff</strong>.</p>
+						<p>To get started, click on the arrow by your name and add some <strong>Positions</strong> and <strong>Staff</strong>.</p>
 					</div>
 				</div>
+			<#elseif employees?size == 0>
+				<div class="row">
+					<div class="span8 offset2 rounded">
+						<h2>You're doing great</h2>
+						<p>Now add some <strong>Staff</strong>.</p>
+					</div>
+				</div>	
+			<#elseif positions?size == 0>
+				<div class="row">
+					<div class="span8 offset2 rounded">
+						<h2>You're doing great</h2>
+						<p>Now add some <strong>Positions</strong>.</p>
+					</div>
+				</div>				
+			<#elseif shiftsOnPage == 0>
+				<div class="row">
+					<div class="span8 offset2 rounded">
+						<h2>Add some shifts</h2>
+						<p>Click the <i class="icon-plus"></i> icon to add a shift. You can also click the <i class="icon-repeat"></i> icon to copy shifts from a previous week.</p>
+					</div>
+				</div>				
 			</#if>
 			
 			<#if (positions?? && positions?size > 0)>
@@ -103,7 +129,7 @@
 		  </div>
 		  <div class="modal-body">
 		  	<form id="positions-form">
-				<p>Find your desired color's <a href="http://www.colorpicker.com/" target="_new">HEX code</a> and enter it after a #-sign or type its name.</p>
+				<p class="hint">Enter a position and a <a href="http://www.w3schools.com/cssref/css_colornames.asp" target="_new">name of a color</a>.</p>
 				<#list positions as pos> 
 					<div class="position-row">
 						<i class="icon-remove"></i>
@@ -118,7 +144,7 @@
 				<i class="icon-remove"></i>
 				<input type="hidden" name="id" value=""/>
 				<input type="text" name="name" placeholder="New position..." />
-				<input class="span2" type="text" name="color" placeholder="Color HEX code..." />
+				<input class="span2" type="text" name="color" placeholder="Color name..." />
 				<span class="label" style=""></span>
 			</div>
 			<div>
@@ -137,6 +163,7 @@
 			<h3>Manage Staff</h3>
 		  </div>
 		  <div class="modal-body">
+		  	<p class="hint">Drag and drop names to change their order.</p>
 		  	<ul>
 		  		<#list employees as emp>
 		  			<li><a href="#" class="btn btn-large disabled"><i class="icon-remove"></i><span class="first">${emp.firstName}</span><span class="last">${emp.lastName}</span></a></li>
@@ -145,9 +172,10 @@
 		  	<div>
 				<input type="text" class="span2" style="margin-bottom:0" name="first" placeholder="First" /> 
 				<input type="text" class="span2" style="margin-bottom:0" name="last" placeholder="Last" /> 
-				<a class="btn btn-small" href="#"><i class="icon-plus"></i></a>
+				<a class="btn btn-small" href="#"><i class="icon-plus"></i></a> 
+				<span class="hint">&larr; Click to add</span>
 			</div>
-			<a href="#" class="template hide btn btn-large disabled"><i class="icon-remove"></i></a>
+			<a href="#" class="template hide btn btn-large disabled"><i class="icon-remove"></i></a> 
 		  </div> 
 		   <div class="modal-footer">
 			<a href="#" class="btn" data-dismiss="modal">Close</a>

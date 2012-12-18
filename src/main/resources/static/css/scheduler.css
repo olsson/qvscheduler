@@ -62,7 +62,10 @@ table .icon-plus {
 .popover-content .position {
 	padding-bottom: 5px;
 }
-
+.hint {
+	font-style: italic;
+	color: #ccc;
+}
 .donate {
 	text-align: center;
 	border: 1px solid #DDD;
@@ -75,6 +78,10 @@ table .icon-plus {
 	opacity: 0.5;
 }
 
+.donate form:hover {
+	opacity: 1;
+}
+
 i.dim {
 	opacity: 0.2;
 	cursor: pointer;
@@ -82,12 +89,6 @@ i.dim {
 
 i.dim:hover {
 	opacity: 1;
-}
-
-@media print {
-	.donate, .icon-plus, .name-drop, .move-week {
-		display: none;
-	}	
 }
 
 .bootstrap-timepicker.open {
@@ -102,7 +103,7 @@ i.dim:hover {
 	margin-top: 8px;
 }
 
-table .labels span, table .labels i {
+table .labels span.label, table .labels i {
 	display: inline-block;
 	text-align: center;
 	float: left;
@@ -111,4 +112,18 @@ table .labels span, table .labels i {
 }
 .btn-group.copy {
 	margin-bottom: 5px;
+}
+.print-label {
+	display: none;
+}
+@media print {
+	.donate, .icon-plus, .name-drop, .move-week {
+		display: none;
+	}	
+	.print-label {
+		/*display: block;*/
+		text-transform: uppercase;
+		font-size: 11px;
+		font-weight: bold;
+	}
 }
