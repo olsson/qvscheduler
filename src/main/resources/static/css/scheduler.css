@@ -113,17 +113,30 @@ table .labels span.label, table .labels i {
 .btn-group.copy {
 	margin-bottom: 5px;
 }
-.print-label {
-	display: none;
+
+.centered {
+	text-align: center;
 }
+	
+table span.label {
+	width:92%;
+}
+
 @media print {
-	.donate, .icon-plus, .name-drop, .move-week {
-		display: none;
-	}	
-	.print-label {
-		/*display: block;*/
-		text-transform: uppercase;
-		font-size: 11px;
-		font-weight: bold;
+	.donate, .icon-plus, .name-drop, .move-week, .icon-repeat {
+		display: none !important;
+	}
+	
+	table td {
+		border-right: 1px solid #ccc;
+	}
+	
+	table td:nth-child(1) {
+		border-left: 1px solid #ccc;
+	}
+	
+	table {
+		border-bottom: 1px solid #ccc;
 	}
 }
+

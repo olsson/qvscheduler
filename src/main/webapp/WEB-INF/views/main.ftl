@@ -35,12 +35,12 @@
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
-						<th>&nbsp;</th>
+						<th class="span2">&nbsp;</th>
 						<#list 0..6 as i>
 							<#assign day = (firstDayOfWeek?long) + (i * 86400000) />
-							<td>
-								${day?number_to_date?string('EEEE d')}
-							</td>
+							<th class="span1">
+								${day?number_to_date?string('EEE d')}
+							</th>
 						</#list>
 					</tr>
 				</thead>
@@ -101,8 +101,8 @@
 			
 			<#if (positions?? && positions?size > 0)>
 				<div class="row">
-					<div class="span2 offset10">
-						<div class="well">
+					<div class="span12">
+						<div class="well centered">
 							<#list positions as pos> 
 								<span class="label label-${pos.name?lower_case?replace(' ','')}">${pos.name}</span>
 							</#list>
