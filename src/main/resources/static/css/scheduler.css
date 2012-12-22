@@ -146,9 +146,13 @@ table span.label {
 	table {
 		border-bottom: 1px solid #ccc;
 	}
+	table th {
+		text-align: center !important;
+	}
 	table span.label {
 		font-size: 1.3em;
 		margin: 1px 0px !important;
+		padding: 4px;
 	}
 	.only-print {
 		display: block;

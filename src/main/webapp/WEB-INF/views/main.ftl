@@ -113,7 +113,7 @@
 			
 			<div class="row only-print">
 				<div class="span12 centered">
-					Printed ${.now}.<br/> &copy; 2012, Erik Olsson. github.com/mrpeachum
+					Printed <span class="date"></span>.<br/> &copy; ${.now?string('yyyy')}, Erik Olsson. github.com/mrpeachum
 				</div>			
 			</div>
 			

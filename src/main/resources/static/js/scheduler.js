@@ -21,6 +21,8 @@
 		$('.labels .label').bind("click", Sched.deleteConfirmShift);
 		$('.icon-repeat').each(Sched.initCopyPopovers);
 		$('.popover-content .btn-primary.copy').live("click", Sched.copyShift);
+		
+		$('.row.only-print .date').text(new Date());
 	};
 	
 	Sched.copyShift = function() {
