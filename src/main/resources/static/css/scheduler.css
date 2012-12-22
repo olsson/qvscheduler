@@ -122,6 +122,10 @@ table span.label {
 	width:92%;
 }
 
+.only-print {
+	display: none;
+}
+
 @media print {
 	.donate, .icon-plus, .name-drop, .move-week, .icon-repeat {
 		display: none !important;
@@ -129,14 +133,25 @@ table span.label {
 	
 	table td {
 		border-right: 1px solid #ccc;
+		padding: 0px 2px !important;
 	}
 	
 	table td:nth-child(1) {
 		border-left: 1px solid #ccc;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
 	}
 	
 	table {
 		border-bottom: 1px solid #ccc;
+	}
+	table span.label {
+		font-size: 1.3em;
+		margin: 1px 0px !important;
+	}
+	.only-print {
+		display: block;
 	}
 }
 

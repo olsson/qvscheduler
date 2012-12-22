@@ -111,6 +111,12 @@
 				</div>
 			</#if>
 			
+			<div class="row only-print">
+				<div class="span12 centered">
+					Printed ${.now}.<br/> &copy; 2012, Erik Olsson. github.com/mrpeachum
+				</div>			
+			</div>
+			
 			<div class="span4 offset4 donate">
 			
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
