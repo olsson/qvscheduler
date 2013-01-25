@@ -277,8 +277,8 @@ public class HibernateSchedulerService implements SchedulerService {
 		}
 		LOGGER.debug("Copying shifts from week {} to week {} for employee {}", new Object[]{fromWeek, toWeek, employeeId});
 
-		for (int i = 0; i <= 6; i++) {
-			Date dayCheck = new Date(fromWeek.getTime() + (i * ONE_DAY_MS));
+		for (int i = 1; i <= 7; i++) {
+			Date dayCheck = new Date(fromWeek.getTime() + ((i - 1) * ONE_DAY_MS));
 			List<Shift> shifts = emp.getShiftsForDayMillis(dayCheck.getTime());
 			LOGGER.debug("Day {} ({}): {} shifts to copy", new Object[]{i, dayCheck, shifts.size()});
 			for (Shift s : shifts) {
