@@ -64,7 +64,7 @@
 	
 	Sched.addNewShift = function() {
 		var $popover = $(this).closest('.popover-content'),
-			position = $popover.find('.position .value').text(),
+			position = $popover.find('.position .value').text().split('(')[0],
 			startTime = $popover.find('.startTime input').val(),
 			endTime = $popover.find('.endTime input').val(),
 			$days = $popover.find('.days input'),
@@ -110,8 +110,13 @@
 	
 	Sched.updateSelectedValue = function() {
 		var newText = $(this).text(),
-			$updateNode = $(this).closest('.btn-group').find('.value');
+			$updateNode = $(this).closest('.btn-group').find('.value'),
+			fullDay = newText.indexOf('(FD)');
 		$updateNode.text(newText);
+		if (fullDay) {
+			$(this).closest('p').find('.startTime input').val('12:00 AM');
+			$(this).closest('p').find('.endTime input').val('11:59 PM');
+		}
 	};
 	
 	Sched.togglePopover = function() {
@@ -174,6 +179,7 @@
 		$('#positions-form .position-row').each(function(idx, row){
 			positions += '{ "id" : "' + $(row).find('input[name="id"]').val() + '", ' +
 						   '"name" : "' + $(row).find('input[name="name"]').val() + '", ' +
+						   '"typeString" : "' + ($(row).find('input[name="fullday"]').is(':checked') ? "FULLDAY" : "REGULAR") + '", ' +
 						   '"color" : "' + $(row).find('input[name="color"]').val() + '" }';
 			if (idx + 1 != total) {
 				positions += ',';

@@ -55,7 +55,11 @@
 									<#list employee.getShiftsForDay(day?c) as shift>
 										<#assign shiftsOnPage = shiftsOnPage + 1 /> 
 										<span class="label label-${shift.position.name?lower_case?replace(' ','')}" data-id="${shift.id?c}" title="Click to delete shift">
+											<#if shift.position.typeString != 'FULLDAY'>
 											${shift.startHour}<#if shift.startMinute != 0>:${shift.startMinute}</#if>&mdash;${shift.endHour}<#if shift.endMinute != 0>:${shift.endMinute}</#if>
+											<#else>
+											${shift.position.name}	
+											</#if>
 										</span>
 									</#list>
 									<#if (positions?size > 0)>
@@ -139,13 +143,14 @@
 		  </div>
 		  <div class="modal-body">
 		  	<form id="positions-form">
-				<p class="hint">Enter a position and a <a href="http://www.w3schools.com/cssref/css_colornames.asp" target="_new">name of a color</a>.</p>
+				<p class="hint">Enter a position and a <a href="http://www.w3schools.com/cssref/css_colornames.asp" target="_new">name of a color</a>. Check the box for special full day positions, such as vacation.</p>
 				<#list positions as pos> 
 					<div class="position-row">
 						<i class="icon-remove"></i>
 						<input type="hidden" name="id" value="${pos.id}"/>
-						<input type="text" name="name" value="${pos.name}" />
+						<input class="span2" type="text" name="name" value="${pos.name}" />
 						<input class="span2" type="text" name="color" value="${pos.color}"/>
+						<input type="checkbox" name="fullday" <#if pos.typeString == "FULLDAY">checked="checked"</#if>/>
 						<span class="label" style="background-color:${pos.color}">${pos.name}</span>
 					</div>
 				</#list>
@@ -153,8 +158,9 @@
 			<div class="position-row hide template">
 				<i class="icon-remove"></i>
 				<input type="hidden" name="id" value=""/>
-				<input type="text" name="name" placeholder="New position..." />
+				<input class="span2" type="text" name="name" placeholder="New position..." />
 				<input class="span2" type="text" name="color" placeholder="Color name..." />
+				<input type="checkbox" name="fullday"/>
 				<span class="label" style=""></span>
 			</div>
 			<div>
@@ -201,7 +207,8 @@
 			  </a>
 				<ul class="dropdown-menu position" role="menu" aria-labelledby="dropdownMenu">
 					<#list positions as pos> 
-						<li><a tabindex="-1" href="#">${pos.name}</a></li>
+						<#assign fullDay><#if pos.typeString == 'FULLDAY'> (FD)</#if></#assign>
+						<li><a tabindex="-1" href="#" data-type="${pos.typeString}">${pos.name}${fullDay}</a></li>
 					</#list>
 				</ul>
 			</div>
