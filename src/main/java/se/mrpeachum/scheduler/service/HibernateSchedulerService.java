@@ -150,6 +150,7 @@ public class HibernateSchedulerService implements SchedulerService {
 					if (existingPos.getId() == newPosition.getId()) {
 						existingPos.setName(newPosition.getName());
 						existingPos.setColor(newPosition.getColor());
+						existingPos.setTypeString(newPosition.getTypeString());
 						positionDao.save(existingPos);
 						break;
 					}

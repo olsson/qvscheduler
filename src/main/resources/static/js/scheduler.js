@@ -116,7 +116,7 @@
 		if (fullDay) {
 			$(this).closest('p').find('.startTime input').val('12:00 AM');
 			$(this).closest('p').find('.endTime input').val('11:59 PM');
-		}
+		} 
 	};
 	
 	Sched.togglePopover = function() {

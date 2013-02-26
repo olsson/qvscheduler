@@ -208,7 +208,7 @@
 				<ul class="dropdown-menu position" role="menu" aria-labelledby="dropdownMenu">
 					<#list positions as pos> 
 						<#assign fullDay><#if pos.typeString == 'FULLDAY'> (FD)</#if></#assign>
-						<li><a tabindex="-1" href="#" data-type="${pos.typeString}">${pos.name}${fullDay}</a></li>
+						<li><a tabindex="-1" href="#" blah="${pos.typeString}">${pos.name}${fullDay}</a></li>
 					</#list>
 				</ul>
 			</div>
