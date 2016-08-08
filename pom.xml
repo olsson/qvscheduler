@@ -29,11 +29,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.cloudfoundry</groupId>
-			<artifactId>cloudfoundry-runtime</artifactId>
-			<version>${org.cloudfoundry-version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>

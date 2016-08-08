@@ -44,14 +44,8 @@
             </value>
         </property>
     </bean>
-  
-	<beans profile="local">
-		<context:property-placeholder location="classpath:scheduler-local.properties"/>
-	</beans>
 
-	<beans profile="cloud">	
-		<context:property-placeholder location="classpath:scheduler-cloud.properties"/>
-	</beans>
+	<context:property-placeholder location="classpath:scheduler.properties"/>
 
 
 </beans>
