@@ -7,22 +7,9 @@
 	<packaging>war</packaging>
 	<name>Quick View Scheduler</name>
 
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>central</name>
-			<url>http://repo1.maven.org/maven2/</url>
-		</repository>
-		<repository>
-			<id>org.springframework.maven.milestone</id>
-			<name>Spring Framework Maven Milestone Repository</name>
-			<url>http://maven.springframework.org/milestone</url>
-		</repository>
-	</repositories>
-
 	<properties>
-		<spring.version>3.2.0.RELEASE</spring.version>
-		<spring.security.version>3.2.0.M1</spring.security.version>
+		<spring.version>3.2.9.RELEASE</spring.version>
+		<spring.security.version>3.2.9.RELEASE</spring.security.version>
 		<slf4j.version>1.7.2</slf4j.version>
 		<freemarker.version>2.3.19</freemarker.version>
 		<org.cloudfoundry-version>0.8.4</org.cloudfoundry-version>
@@ -153,7 +140,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.1.7.Final</version>
+			<version>4.1.8.Final</version>
 		</dependency>
 
 		<dependency>
