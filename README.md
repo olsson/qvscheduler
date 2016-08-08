@@ -2,8 +2,8 @@ Quick View Scheduler
 ===========
 
 This is a simple Java web application to create and manage workplace schedules.
+It is designed to run easily in the cloud. A freely hosted version is running on [Heroku](https://www.heroku.com). (Not guaranteed to be up at any time.)
 
-It is designed to run easily in the cloud. A freely hosted version is running on [Heroku](https://qvscheduler.herokuapp.com). (Not guaranteed to be up at any time.)
  
 ## How does it work?
 
