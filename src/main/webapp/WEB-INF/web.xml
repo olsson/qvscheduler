@@ -9,11 +9,6 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/context/applicationContext*.xml</param-value>
 	</context-param>
-	
-	<context-param>
-		<param-name>contextInitializerClasses</param-name>
-		<param-value>se.mrpeachum.context.CloudEnvironmentInitializer</param-value>
-	</context-param>
 
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
