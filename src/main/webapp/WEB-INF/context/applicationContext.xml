@@ -19,14 +19,19 @@
 
 	<tx:annotation-driven />
 
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-		<property name="driverClass" value="${db.driver}" />
-		<property name="jdbcUrl" value="${db.url}" />
-		<property name="maxIdleTime" value="60"/>
-		<property name="initialPoolSize" value="5"/>
-		<property name="minPoolSize" value="1"/>
-        <property name="maxPoolSize" value="30"/>
-	</bean>
+    <bean class="java.net.URI" id="dbUrl">
+        <constructor-arg value="${db.hostname}"/>
+    </bean>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="url" value="#{ 'jdbc:mysql://' + @dbUrl.getHost() + @dbUrl.getPath() }"/>
+        <property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }"/>
+        <property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }"/>
+        <property name="driverClassName" value="${db.driver}"/>
+        <property name="initialSize" value="5"/>
+        <property name="minIdle" value="1"/>
+        <property name="maxTotal" value="30"/>
+    </bean>
 	
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
